@@ -46,14 +46,14 @@ function saveMessage(msg) {
 
 // Mock DB functions matching Firestore API surface
 const mockDB = {
-  async getSettings() { return MOCK_SETTINGS; },
-  async getSeniorByCode(code) { return MOCK_SENIORS.find(s => s.code === code.toUpperCase()) || null; },
-  async getAllSeniors() { return MOCK_SENIORS; },
-  async getMemoriesFor(id) { return MOCK_MEMORIES.filter(m => m.target === 'all' || m.target === id); },
+  async getSettings() { return adminGetSettings(); },
+  async getSeniorByCode(code) { return adminGetSeniors().find(s => s.code === code.toUpperCase()) || null; },
+  async getAllSeniors() { return adminGetSeniors(); },
+  async getMemoriesFor(id) { return adminGetMemories().filter(m => m.target === 'all' || m.target === id); },
   async getMessagesFor(id) { return getSavedMessages().filter(m => m.to_senior_id === id); },
   async getMessagesSentBy(id) { return getSavedMessages().filter(m => m.from_senior_id === id); },
   async addMessage(data) { saveMessage(data); },
-  listenAutographOpen(cb) { cb(MOCK_SETTINGS.autograph_open); /* no real-time in mock */ },
+  listenAutographOpen(cb) { cb(adminGetSettings().autograph_open); /* no real-time in mock */ },
 };
 
 // ── State ────────────────────────────────────────────────────
