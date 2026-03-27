@@ -2020,15 +2020,18 @@ a {
   flex: 1;
   min-width: 160px;
 }
+
 /* ══════════════════════════════════════════════════════════
    ADMIN PANEL (embedded in index.html)
    ══════════════════════════════════════════════════════════ */
 #admin-panel {
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   z-index: 300;
   background: #0a0802;
   overflow: hidden;
 }
+
 .admin-shell {
   display: flex;
   height: 100vh;
@@ -2040,23 +2043,25 @@ a {
   width: 220px;
   flex-shrink: 0;
   background: #141008;
-  border-right: 1px solid rgba(201,168,76,0.2);
+  border-right: 1px solid rgba(201, 168, 76, 0.2);
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
   gap: 0;
 }
+
 .admin-logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
   color: var(--gold);
   font-family: var(--font-display);
   font-size: 1rem;
   letter-spacing: 0.08em;
 }
+
 .admin-nav {
   flex: 1;
   display: flex;
@@ -2064,6 +2069,7 @@ a {
   gap: 0.25rem;
   padding: 1rem 0.75rem;
 }
+
 .admin-nav-btn {
   display: flex;
   align-items: center;
@@ -2080,22 +2086,35 @@ a {
   transition: all 0.25s;
   width: 100%;
 }
-.admin-nav-btn:hover { background: rgba(201,168,76,0.08); color: var(--gold); }
-.admin-nav-btn.active { background: rgba(201,168,76,0.15); color: var(--gold); border-left: 3px solid var(--gold); }
+
+.admin-nav-btn:hover {
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--gold);
+}
+
+.admin-nav-btn.active {
+  background: rgba(201, 168, 76, 0.15);
+  color: var(--gold);
+  border-left: 3px solid var(--gold);
+}
+
 .admin-logout-btn {
   background: transparent;
   border: none;
-  color: rgba(245,240,232,0.4);
+  color: rgba(245, 240, 232, 0.4);
   font-family: var(--font-body);
   font-size: 0.82rem;
   padding: 0.75rem 1.25rem;
   cursor: pointer;
   text-align: left;
   transition: color 0.2s;
-  border-top: 1px solid rgba(201,168,76,0.1);
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
   margin-top: auto;
 }
-.admin-logout-btn:hover { color: var(--ivory); }
+
+.admin-logout-btn:hover {
+  color: var(--ivory);
+}
 
 /* Main area */
 .admin-main {
@@ -2105,8 +2124,17 @@ a {
   display: flex;
   flex-direction: column;
 }
-.admin-tab { display: none; }
-.admin-tab.active { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.admin-tab {
+  display: none;
+}
+
+.admin-tab.active {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .admin-tab-header {
   display: flex;
   align-items: center;
@@ -2114,6 +2142,7 @@ a {
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
 .admin-tab-title {
   font-family: var(--font-display);
   font-size: clamp(1rem, 2.5vw, 1.4rem);
@@ -2123,32 +2152,36 @@ a {
 
 /* Form card */
 .admin-form-card {
-  background: rgba(201,168,76,0.05);
-  border: 1px solid rgba(201,168,76,0.2);
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.2);
   border-radius: 10px;
   padding: 1.25rem 1.5rem;
 }
+
 .admin-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
+
 .admin-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
+
 .admin-field label {
   font-family: var(--font-body);
   font-size: 0.8rem;
-  color: rgba(245,240,232,0.6);
+  color: rgba(245, 240, 232, 0.6);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
 .admin-field input,
 .admin-field select {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(201,168,76,0.3);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.3);
   border-radius: 6px;
   color: var(--ivory);
   font-family: var(--font-body);
@@ -2157,23 +2190,31 @@ a {
   outline: none;
   transition: border-color 0.25s;
 }
+
 .admin-field input:focus,
-.admin-field select:focus { border-color: var(--gold); }
-.admin-field select option { background: #1a1408; }
+.admin-field select:focus {
+  border-color: var(--gold);
+}
+
+.admin-field select option {
+  background: #1a1408;
+}
 
 /* Table */
 .admin-table-wrap {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(201,168,76,0.15);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 168, 76, 0.15);
   border-radius: 10px;
   overflow: auto;
 }
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-body);
   font-size: 0.88rem;
 }
+
 .admin-table th {
   padding: 0.75rem 1rem;
   text-align: left;
@@ -2182,25 +2223,38 @@ a {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
   white-space: nowrap;
 }
+
 .admin-table td {
   padding: 0.75rem 1rem;
   color: var(--ivory-dark);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   vertical-align: middle;
 }
-.admin-table tr:last-child td { border-bottom: none; }
-.admin-table tr:hover td { background: rgba(201,168,76,0.04); }
-.admin-table td img { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; }
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover td {
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.admin-table td img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
 
 /* Code badge */
 .admin-code-badge {
   font-family: monospace;
-  background: rgba(201,168,76,0.12);
+  background: rgba(201, 168, 76, 0.12);
   color: var(--gold);
-  border: 1px solid rgba(201,168,76,0.3);
+  border: 1px solid rgba(201, 168, 76, 0.3);
   padding: 0.2rem 0.6rem;
   border-radius: 4px;
   font-size: 0.85rem;
@@ -2210,7 +2264,7 @@ a {
 /* Delete btn */
 .admin-delete-btn {
   background: transparent;
-  border: 1px solid rgba(224,85,85,0.4);
+  border: 1px solid rgba(224, 85, 85, 0.4);
   color: #e07a7a;
   font-size: 0.78rem;
   padding: 0.3rem 0.7rem;
@@ -2218,7 +2272,11 @@ a {
   cursor: pointer;
   transition: all 0.2s;
 }
-.admin-delete-btn:hover { background: rgba(224,85,85,0.1); border-color: #e05555; }
+
+.admin-delete-btn:hover {
+  background: rgba(224, 85, 85, 0.1);
+  border-color: #e05555;
+}
 
 /* Settings */
 .admin-settings-grid {
@@ -2227,23 +2285,26 @@ a {
   gap: 1rem;
   max-width: 800px;
 }
+
 .admin-setting-card {
-  background: rgba(201,168,76,0.05);
-  border: 1px solid rgba(201,168,76,0.18);
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.18);
   border-radius: 10px;
   padding: 1.25rem;
 }
+
 .admin-setting-label {
   font-family: var(--font-body);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(245,240,232,0.55);
+  color: rgba(245, 240, 232, 0.55);
   margin-bottom: 0.5rem;
 }
+
 .admin-setting-input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(201,168,76,0.3);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.3);
   border-radius: 6px;
   color: var(--ivory);
   font-family: var(--font-body);
@@ -2253,40 +2314,85 @@ a {
   width: 100%;
   transition: border-color 0.25s;
 }
-.admin-setting-input:focus { border-color: var(--gold); }
+
+.admin-setting-input:focus {
+  border-color: var(--gold);
+}
 
 /* Toggle switch */
-.admin-toggle { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
-.admin-toggle input { opacity: 0; width: 0; height: 0; }
+.admin-toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.admin-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
 .admin-toggle-slider {
-  position: absolute; inset: 0;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(201,168,76,0.25);
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.25);
   border-radius: 26px;
   cursor: pointer;
   transition: background 0.3s;
 }
+
 .admin-toggle-slider::before {
   content: '';
   position: absolute;
-  width: 18px; height: 18px;
-  left: 3px; bottom: 3px;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  bottom: 3px;
   background: var(--ivory-dark);
   border-radius: 50%;
   transition: transform 0.3s;
 }
-.admin-toggle input:checked + .admin-toggle-slider { background: rgba(201,168,76,0.3); border-color: var(--gold); }
-.admin-toggle input:checked + .admin-toggle-slider::before { transform: translateX(22px); background: var(--gold); }
+
+.admin-toggle input:checked+.admin-toggle-slider {
+  background: rgba(201, 168, 76, 0.3);
+  border-color: var(--gold);
+}
+
+.admin-toggle input:checked+.admin-toggle-slider::before {
+  transform: translateX(22px);
+  background: var(--gold);
+}
 
 /* btn-sm modifier */
-.btn-sm { padding: 0.5rem 1.1rem; font-size: 0.8rem; min-height: 36px; }
+.btn-sm {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+  min-height: 36px;
+}
 
 /* Responsive: collapse sidebar on mobile */
 @media (max-width: 600px) {
-  .admin-sidebar { width: 56px; }
-  .admin-logo span, .admin-nav-btn span, .admin-logout-btn { display: none; }
-  .admin-nav-btn { justify-content: center; font-size: 1.1rem; }
-  .admin-logout-btn { text-align: center; }
+  .admin-sidebar {
+    width: 56px;
+  }
+
+  .admin-logo span,
+  .admin-nav-btn span,
+  .admin-logout-btn {
+    display: none;
+  }
+
+  .admin-nav-btn {
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .admin-logout-btn {
+    text-align: center;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2299,7 +2405,7 @@ a {
   border-radius: 4px;
   position: relative;
   padding: 1rem 1.25rem 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(8,6,4,0.6);
+  box-shadow: 0 25px 50px -12px rgba(8, 6, 4, 0.6);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -2307,6 +2413,7 @@ a {
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
 .modal-backdrop.active .autograph-card {
   transform: translateY(0) rotate(0);
   opacity: 1;
@@ -2321,7 +2428,7 @@ a {
   width: 120px;
   height: 32px;
   background: rgba(220, 150, 90, 0.85);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 10;
   clip-path: polygon(2% 0%, 98% 5%, 100% 95%, 0% 100%);
 }
@@ -2336,18 +2443,21 @@ a {
   border-radius: 2px;
   overflow: hidden;
 }
+
 .autograph-photo-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: opacity 0.3s;
 }
+
 .photo-src-toggle {
   position: absolute;
-  bottom: 8px; right: 8px;
+  bottom: 8px;
+  right: 8px;
   display: flex;
   gap: 0.25rem;
-  background: rgba(8,6,4,0.6);
+  background: rgba(8, 6, 4, 0.6);
   padding: 0.25rem;
   border-radius: 20px;
   backdrop-filter: blur(4px);
@@ -2355,11 +2465,13 @@ a {
   transform: translateY(10px);
   transition: all 0.3s;
 }
+
 .autograph-photo-wrap:hover .photo-src-toggle,
 .photo-src-toggle:focus-within {
   opacity: 1;
   transform: translateY(0);
 }
+
 .src-btn {
   background: transparent;
   border: none;
@@ -2371,8 +2483,16 @@ a {
   cursor: pointer;
   transition: all 0.2s;
 }
-.src-btn:hover { background: rgba(255,255,255,0.1); }
-.src-btn.active { background: var(--ivory); color: #2c1a0a; font-weight: 600; }
+
+.src-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.src-btn.active {
+  background: var(--ivory);
+  color: #2c1a0a;
+  font-weight: 600;
+}
 
 /* Recipient Row */
 .autograph-to-row {
@@ -2382,15 +2502,18 @@ a {
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
 .autograph-to-row span {
   font-family: var(--font-body);
   color: #8c734b;
   font-size: 1rem;
   font-style: italic;
 }
+
 .autograph-to-row h2 {
   font-family: var(--font-display);
-  color: #c96e24; /* Warm orange tone matching the reference "Farewell!" */
+  color: #c96e24;
+  /* Warm orange tone matching the reference "Farewell!" */
   font-size: 1.8rem;
   margin: 0;
   line-height: 1;
@@ -2399,8 +2522,8 @@ a {
 /* Textarea */
 .autograph-textarea {
   width: 100%;
-  background: rgba(8,6,4,0.03);
-  border: 1px dashed rgba(140,115,75,0.3);
+  background: rgba(8, 6, 4, 0.03);
+  border: 1px dashed rgba(140, 115, 75, 0.3);
   border-radius: 4px;
   resize: none;
   padding: 0.75rem;
@@ -2410,12 +2533,17 @@ a {
   line-height: 1.5;
   transition: all 0.2s;
 }
+
 .autograph-textarea:focus {
   outline: none;
   border-color: #c96e24;
   background: #fff;
 }
-.autograph-textarea::placeholder { color: rgba(44,26,10,0.3); font-style: italic; }
+
+.autograph-textarea::placeholder {
+  color: rgba(44, 26, 10, 0.3);
+  font-style: italic;
+}
 
 .autograph-actions {
   display: flex;
@@ -2423,12 +2551,14 @@ a {
   justify-content: flex-end;
   margin-top: 0.5rem;
 }
+
 .autograph-cancel {
   color: #8c734b !important;
-  border-color: rgba(140,115,75,0.2) !important;
+  border-color: rgba(140, 115, 75, 0.2) !important;
 }
+
 .autograph-cancel:hover {
-  background: rgba(140,115,75,0.1) !important;
+  background: rgba(140, 115, 75, 0.1) !important;
   color: #2c1a0a !important;
 }
 
@@ -2442,33 +2572,75 @@ a {
   align-items: stretch;
   Perspective: none;
 }
+
 .book-page {
   /* Override the old 3d page stuff */
   position: relative !important;
   transform-style: flat !important;
   transform-origin: center !important;
   backface-visibility: visible !important;
-  box-shadow: 0 15px 35px -5px rgba(8,6,4,0.5) !important;
+  box-shadow: 0 15px 35px -5px rgba(8, 6, 4, 0.5) !important;
 }
-.book-page.page-left { transform: rotate(-2deg) !important; }
-.book-page.page-right { transform: rotate(1.5deg) !important; }
-.book-page.flip-left, .book-page.flip-right {
+
+.book-page.page-left {
+  transform: rotate(-2deg) !important;
+}
+
+.book-page.page-right {
+  transform: rotate(1.5deg) !important;
+}
+
+.book-page.flip-left,
+.book-page.flip-right {
   animation: polaroidSwap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
+
 @keyframes polaroidSwap {
-  0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
-  40% { transform: translateY(-30px) scale(0.95) rotate(-5deg); opacity: 0; }
-  60% { transform: translateY(20px) scale(0.95) rotate(5deg); opacity: 0; }
-  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+
+  40% {
+    transform: translateY(-30px) scale(0.95) rotate(-5deg);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(20px) scale(0.95) rotate(5deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {
-  .book-spread { gap: 0; }
-  .book-page.page-left { transform: rotate(0deg) !important; }
-  .book-page.mobile-slide-out-left { animation: slideLeft 0.4s forwards !important; }
-  .book-page.mobile-slide-out-right { animation: slideRight 0.4s forwards !important; }
-  .book-page.mobile-slide-in-right { animation: slideInRight 0.4s forwards !important; }
-  .book-page.mobile-slide-in-left { animation: slideInLeft 0.4s forwards !important; }
+  .book-spread {
+    gap: 0;
+  }
+
+  .book-page.page-left {
+    transform: rotate(0deg) !important;
+  }
+
+  .book-page.mobile-slide-out-left {
+    animation: slideLeft 0.4s forwards !important;
+  }
+
+  .book-page.mobile-slide-out-right {
+    animation: slideRight 0.4s forwards !important;
+  }
+
+  .book-page.mobile-slide-in-right {
+    animation: slideInRight 0.4s forwards !important;
+  }
+
+  .book-page.mobile-slide-in-left {
+    animation: slideInLeft 0.4s forwards !important;
+  }
 }
 
 /* Fix for the Polaroid Autograph Book Pages */
@@ -2476,8 +2648,10 @@ a {
   background: var(--ivory) !important;
   border: none !important;
   color: #2c1a0a !important;
-  padding: 1rem 1.25rem 2.5rem !important; /* Extra bottom padding for the polaroid look */
+  padding: 1rem 1.25rem 2.5rem !important;
+  /* Extra bottom padding for the polaroid look */
 }
+
 .book-page.autograph-card .autograph-textarea {
   background: transparent !important;
   border: none !important;
@@ -2486,27 +2660,83 @@ a {
   line-height: 1.8 !important;
   padding: 0 !important;
   /* Add subtle lines like writing paper */
-  background-image: repeating-linear-gradient(transparent, transparent 1.6rem, rgba(0,0,0,0.08) 1.6rem, rgba(0,0,0,0.08) 1.8rem) !important;
+  background-image: repeating-linear-gradient(transparent, transparent 1.6rem, rgba(0, 0, 0, 0.08) 1.6rem, rgba(0, 0, 0, 0.08) 1.8rem) !important;
   background-attachment: local !important;
 }
+
 .book-page.autograph-card .autograph-to-row h2 {
   font-family: var(--font-display) !important;
   color: #c96e24 !important;
 }
+
 .book-page.autograph-card .autograph-to-row span {
   color: #8c734b !important;
   font-style: italic !important;
 }
+
 .book-page.autograph-card .autograph-photo-wrap {
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Force Polaroid Swap Animation on Mobile */
 @media (max-width: 768px) {
+
   .book-page.mobile-slide-out-left,
   .book-page.mobile-slide-out-right,
   .book-page.mobile-slide-in-right,
   .book-page.mobile-slide-in-left {
     animation: polaroidSwap 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  }
+}
+
+/* Responsive Admin Panel */
+@media (max-width: 768px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    padding: 0.5rem;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+    align-items: center;
+  }
+
+  .admin-logo {
+    padding: 0 1rem 0 0;
+    border-bottom: none;
+    border-right: 1px solid rgba(201, 168, 76, 0.15);
+    margin-bottom: 0;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .admin-nav-btn {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .admin-logout-btn {
+    margin-top: 0;
+    margin-left: auto;
+    border-top: none;
+    border-left: 1px solid rgba(201, 168, 76, 0.1);
+    padding: 0.5rem 0.75rem;
+  }
+
+  .admin-main {
+    padding: 1rem;
+  }
+
+  .admin-table-wrap {
+    overflow-x: auto;
   }
 }
