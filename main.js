@@ -221,7 +221,7 @@ function initThreeJS() {
 // ── ENTRY SCREEN ─────────────────────────────────────────────
 async function initEntryScreen() {
   const settings = await mockDB.getSettings();
-  $('entry-site-title').textContent = `Farewell — ${settings.department} ${settings.batch_year}`;
+  $('entry-site-title').textContent = "ALvida'2026";
   $('entry-dept-year').textContent = `${settings.department} · Class of ${settings.batch_year}`;
 
   const input = $('entry-code-input');
