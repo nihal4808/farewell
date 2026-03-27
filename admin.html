@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Farewell Website</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+            background: #080d22;
+        }
+
+        select option {
+            background: #0a0f2c;
+            color: #f5f0e8;
+        }
+
+        .upload-progress {
+            height: 4px;
+            background: rgba(201, 168, 76, 0.15);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .msg-row td {
+            max-width: 260px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #seniors-table tbody tr {
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+
+    <!-- AUTH SCREEN -->
+    <div class="admin-auth-screen" id="auth-screen">
+        <div class="admin-auth-card ornate-border">
+            <h1>Admin Portal</h1>
+            <p style="text-align:center;color:rgba(245,240,232,0.5);font-size:0.85rem">Farewell Website Management</p>
+            <input class="admin-input" type="password" id="admin-password" placeholder="Admin password"
+                autocomplete="current-password" />
+            <button class="btn-gold" id="btn-admin-login" type="button">Enter Admin Panel</button>
+            <div id="auth-error" style="color:#e07a7a;font-size:0.82rem;text-align:center;min-height:1em"></div>
+        </div>
+    </div>
+
+    <!-- ADMIN LAYOUT -->
+    <div class="admin-layout" id="admin-layout">
+        <header class="admin-header">
+            <h1>✦ Admin Panel — Farewell</h1>
+            <button class="btn-ghost btn-sm" id="btn-logout">Log Out</button>
+        </header>
+        <div class="admin-main">
+            <!-- Sidebar -->
+            <nav class="admin-sidebar" aria-label="Admin navigation">
+                <button class="sidebar-btn active" data-tab="tab-seniors">👥 Seniors</button>
+                <button class="sidebar-btn" data-tab="tab-memories">🖼️ Memories</button>
+                <button class="sidebar-btn" data-tab="tab-settings">⚙️ Settings</button>
+                <button class="sidebar-btn" data-tab="tab-messages">📩 Messages</button>
+            </nav>
+
+            <main class="admin-content">
+
+                <!-- TAB 1: SENIORS -->
+                <div class="admin-tab active" id="tab-seniors">
+                    <!-- Add Senior -->
+                    <div class="admin-card">
+                        <h2>Add New Senior</h2>
+                        <form class="admin-form" id="add-senior-form" autocomplete="off">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input class="admin-input" type="text" id="s-name" placeholder="Jane Smith" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <input class="admin-input" type="text" id="s-dept" placeholder="Computer Science"
+                                    required />
+                            </div>
+                            <div class="form-group">
+                                <label>Batch Year</label>
+                                <input class="admin-input" type="text" id="s-year" placeholder="2025" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Profile Photo</label>
+                                <div class="file-input-wrap" id="senior-photo-wrap">
+                                    <input type="file" id="s-photo" accept="image/*" />
+                                    <span class="file-icon">📷</span>
+                                    <p>Click to upload photo</p>
+                                    <span id="s-photo-name" style="font-size:0.78rem;color:var(--gold)"></span>
+                                </div>
+                            </div>
+                            <div class="full-col" style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
+                                <button class="btn-gold btn-sm" type="submit" id="btn-add-senior">Add Senior</button>
+                                <div class="upload-progress" style="flex:1;min-width:120px">
+                                    <div class="upload-progress-bar" id="senior-upload-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div class="full-col" id="add-senior-error"
+                                style="color:#e07a7a;font-size:0.82rem;min-height:1em"></div>
+                        </form>
+                        <!-- Generated code display -->
+                        <div class="generated-code-box" id="generated-code-box" style="display:none;margin-top:1rem">
+                            <div>
+                                <div
+                                    style="font-size:0.72rem;color:rgba(201,168,76,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem">
+                                    Generated Code</div>
+                                <div class="code-text" id="generated-code-text"></div>
+                            </div>
+                            <button class="btn-ghost btn-sm" id="btn-copy-code">Copy</button>
+                        </div>
+                    </div>
+
+                    <!-- Seniors Table -->
+                    <div class="admin-card">
+                        <h2>All Seniors <span id="seniors-count"
+                                style="font-size:0.78rem;color:rgba(201,168,76,0.5);font-weight:400"></span></h2>
+                        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap">
+                            <button class="btn-ghost btn-sm" id="btn-export-csv">⬇ Export Codes CSV</button>
+                            <button class="btn-ghost btn-sm" id="btn-refresh-seniors">↻ Refresh</button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="seniors-table">
+                                <thead>
+                                    <tr>
+                                        <th>Photo</th>
+                                        <th>Name</th>
+                                        <th>Department</th>
+                                        <th>Year</th>
+                                        <th>Code</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="seniors-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: MEMORIES -->
+                <div class="admin-tab" id="tab-memories">
+                    <div class="admin-card">
+                        <h2>Upload Memories</h2>
+                        <div class="admin-form" style="grid-template-columns:1fr">
+                            <div class="form-group">
+                                <label>Target</label>
+                                <select class="admin-select" id="mem-target">
+                                    <option value="all">Shared — All Seniors</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Photos (multiple allowed)</label>
+                                <div class="file-input-wrap" id="mem-photo-wrap">
+                                    <input type="file" id="mem-photos" accept="image/*" multiple />
+                                    <span class="file-icon">🖼️</span>
+                                    <p>Click to select photos</p>
+                                    <span id="mem-photo-count" style="font-size:0.78rem;color:var(--gold)"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Caption (optional — applies to all selected)</label>
+                                <input class="admin-input" type="text" id="mem-caption"
+                                    placeholder="A wonderful memory…" />
+                            </div>
+                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
+                                <button class="btn-gold btn-sm" id="btn-upload-memories">Upload Photos</button>
+                                <div class="upload-progress" style="flex:1;min-width:120px">
+                                    <div class="upload-progress-bar" id="mem-upload-bar" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <div id="mem-error" style="color:#e07a7a;font-size:0.82rem;min-height:1em"></div>
+                        </div>
+                    </div>
+                    <div class="admin-card">
+                        <h2>Uploaded Memories</h2>
+                        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap">
+                            <button class="btn-ghost btn-sm" id="btn-refresh-memories">↻ Refresh</button>
+                        </div>
+                        <div class="memory-preview-grid" id="memories-admin-grid"></div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: SETTINGS -->
+                <div class="admin-tab" id="tab-settings">
+                    <div class="admin-card">
+                        <h2>Autograph Wall</h2>
+                        <div class="toggle-wrap">
+                            <span class="toggle-label">Allow seniors to write messages</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-wall-open" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="status-badge closed" id="wall-status-badge">CLOSED</span>
+                        </div>
+                    </div>
+                    <div class="admin-card">
+                        <h2>Site Information</h2>
+                        <div class="admin-form" style="grid-template-columns:1fr">
+                            <div class="form-group">
+                                <label>Department Name</label>
+                                <input class="admin-input" type="text" id="settings-dept"
+                                    placeholder="Computer Science" />
+                            </div>
+                            <div class="form-group">
+                                <label>Batch Year</label>
+                                <input class="admin-input" type="text" id="settings-year" placeholder="2025" />
+                            </div>
+                            <div>
+                                <button class="btn-gold btn-sm" id="btn-save-settings">Save Settings</button>
+                            </div>
+                            <div id="settings-msg" style="font-size:0.82rem;min-height:1em;color:var(--gold)"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: MESSAGES -->
+                <div class="admin-tab" id="tab-messages">
+                    <div class="admin-card">
+                        <h2>All Messages</h2>
+                        <div class="filter-row" style="margin-bottom:1rem">
+                            <select class="admin-select" id="filter-to" style="flex:1;min-width:140px">
+                                <option value="">All Recipients</option>
+                            </select>
+                            <select class="admin-select" id="filter-from" style="flex:1;min-width:140px">
+                                <option value="">All Senders</option>
+                            </select>
+                            <button class="btn-ghost btn-sm" id="btn-refresh-messages">↻ Refresh</button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="messages-table">
+                                <thead>
+                                    <tr>
+                                        <th>To</th>
+                                        <th>From</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="messages-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog -->
+    <div class="confirm-backdrop" id="confirm-backdrop">
+        <div class="confirm-card ornate-border">
+            <h3 id="confirm-title">Confirm Action</h3>
+            <p id="confirm-body">Are you sure?</p>
+            <div class="confirm-actions">
+                <button class="btn-ghost" id="confirm-cancel">Cancel</button>
+                <button class="btn-danger" id="confirm-ok">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-container"></div>
+
+    <!-- SVG Defs (same corner ornament) -->
+    <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <symbol id="corner-ornament" viewBox="0 0 48 48">
+                <path d="M4 4 L4 18 Q4 4 18 4 Z" fill="none" stroke="#c9a84c" stroke-width="1.5" />
+                <circle cx="4" cy="4" r="2" fill="#c9a84c" />
+                <path d="M8 4 Q16 4 16 12" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6" />
+            </symbol>
+        </defs>
+    </svg>
+
+    <script type="module">
+        import { db, storage, auth } from './firebase-config.js';
+        import {
+            collection, doc, getDocs, addDoc, updateDoc, deleteDoc,
+            serverTimestamp, getDoc, setDoc, onSnapshot, query, orderBy, where
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+        import {
+            ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+        // ── Config ────────────────────────────────────────────────────
+        const ADMIN_PASSWORD = 'farewell2025admin'; // Change this!
+
+        // ── Utils ─────────────────────────────────────────────────────
+        const $ = id => document.getElementById(id);
+        const qs = s => document.querySelector(s);
+
+        function showToast(msg, type = 'info') {
+            const c = $('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => { t.classList.add('fade-out'); setTimeout(() => t.remove(), 450); }, 4000);
+        }
+
+        function generateCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // ── Auth ──────────────────────────────────────────────────────
+        $('btn-admin-login').addEventListener('click', () => {
+            const pw = $('admin-password').value;
+            if (pw === ADMIN_PASSWORD) {
+                $('auth-screen').style.display = 'none';
+                $('admin-layout').classList.add('active');
+                loadAll();
+            } else {
+                $('auth-error').textContent = 'Incorrect password.';
+            }
+        });
+        $('admin-password').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-admin-login').click(); });
+        $('btn-logout').addEventListener('click', () => location.reload());
+
+        // ── Tabs ──────────────────────────────────────────────────────
+        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                $(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ── Confirm dialog ────────────────────────────────────────────
+        let confirmResolve = null;
+        function confirmDialog(title, body) {
+            $('confirm-title').textContent = title;
+            $('confirm-body').textContent = body;
+            $('confirm-backdrop').classList.add('active');
+            return new Promise(res => { confirmResolve = res; });
+        }
+        $('confirm-ok').addEventListener('click', () => { $('confirm-backdrop').classList.remove('active'); confirmResolve && confirmResolve(true); });
+        $('confirm-cancel').addEventListener('click', () => { $('confirm-backdrop').classList.remove('active'); confirmResolve && confirmResolve(false); });
+
+        // ── File input labels ────────────────────────────────────────
+        $('senior-photo-wrap').addEventListener('click', () => $('s-photo').click());
+        $('s-photo').addEventListener('change', () => {
+            $('s-photo-name').textContent = $('s-photo').files[0]?.name || '';
+        });
+        $('mem-photo-wrap').addEventListener('click', () => $('mem-photos').click());
+        $('mem-photos').addEventListener('change', () => {
+            $('mem-photo-count').textContent = `${$('mem-photos').files.length} file(s) selected`;
+        });
+
+        // ── SENIORS ──────────────────────────────────────────────────
+        let allSeniorsAdmin = [];
+
+        async function loadSeniors() {
+            try {
+                const snap = await getDocs(collection(db, 'seniors'));
+                allSeniorsAdmin = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderSeniorsTable();
+                populateSeniorDropdowns();
+                $('seniors-count').textContent = `(${allSeniorsAdmin.length})`;
+            } catch (e) { showToast('Failed to load seniors.', 'error'); }
+        }
+
+        function renderSeniorsTable() {
+            const tbody = $('seniors-tbody');
+            tbody.innerHTML = '';
+            if (!allSeniorsAdmin.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;opacity:0.4;padding:2rem">No seniors added yet</td></tr>';
+                return;
+            }
+            allSeniorsAdmin.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+      <td><img class="thumb-img" src="${s.photo_url || ''}" alt="${s.name}" onerror="this.src=''" loading="lazy"/></td>
+      <td>${s.name}</td>
+      <td>${s.department || ''}</td>
+      <td>${s.year || ''}</td>
+      <td><span class="code-badge">${s.code}</span></td>
+      <td style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="btn-danger btn-sm" data-id="${s.id}" data-action="delete-senior">Delete</button>
+      </td>
+    `;
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('[data-action="delete-senior"]').forEach(btn => {
+                btn.addEventListener('click', () => deleteSenior(btn.dataset.id));
+            });
+        }
+
+        async function deleteSenior(id) {
+            const ok = await confirmDialog('Delete Senior', 'This will permanently delete this senior and their profile photo.');
+            if (!ok) return;
+            try {
+                // Delete storage photo
+                try { await deleteObject(storageRef(storage, `seniors/${id}/profile.jpg`)); } catch (e) { }
+                await deleteDoc(doc(db, 'seniors', id));
+                showToast('Senior deleted.', 'success');
+                await loadSeniors();
+            } catch (e) { showToast('Failed to delete.', 'error'); }
+        }
+
+        $('add-senior-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const name = $('s-name').value.trim();
+            const dept = $('s-dept').value.trim();
+            const year = $('s-year').value.trim();
+            const file = $('s-photo').files[0];
+            if (!name || !dept || !year) { $('add-senior-error').textContent = 'All fields required.'; return; }
+
+            const btn = $('btn-add-senior');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            $('add-senior-error').textContent = '';
+            $('generated-code-box').style.display = 'none';
+
+            try {
+                // Generate unique code
+                let code, unique = false;
+                while (!unique) {
+                    code = generateCode();
+                    const q = query(collection(db, 'seniors'), where('code', '==', code));
+                    const snap = await getDocs(q);
+                    unique = snap.empty;
+                }
+
+                // Create Firestore doc first to get ID
+                const docRef = await addDoc(collection(db, 'seniors'), { name, department: dept, year, code, photo_url: '' });
+
+                // Upload photo
+                let photoUrl = '';
+                if (file) {
+                    const path = `seniors/${docRef.id}/profile.jpg`;
+                    const sRef = storageRef(storage, path);
+                    await new Promise((res, rej) => {
+                        const task = uploadBytesResumable(sRef, file);
+                        task.on('state_changed',
+                            snap => { $('senior-upload-bar').style.width = (snap.bytesTransferred / snap.totalBytes * 100) + '%'; },
+                            rej,
+                            async () => { photoUrl = await getDownloadURL(task.snapshot.ref); res(); }
+                        );
+                    });
+                    await updateDoc(docRef, { photo_url: photoUrl });
+                }
+
+                // Show code
+                $('generated-code-text').textContent = code;
+                $('generated-code-box').style.display = 'flex';
+                $('add-senior-form').reset();
+                $('s-photo-name').textContent = '';
+                $('senior-upload-bar').style.width = '0%';
+                showToast(`Senior added! Code: ${code}`, 'success');
+                await loadSeniors();
+            } catch (err) {
+                $('add-senior-error').textContent = 'Failed to add senior: ' + err.message;
+            } finally {
+                btn.disabled = false; btn.textContent = 'Add Senior';
+            }
+        });
+
+        $('btn-copy-code').addEventListener('click', () => {
+            navigator.clipboard.writeText($('generated-code-text').textContent).then(() => showToast('Code copied!', 'success'));
+        });
+
+        $('btn-export-csv').addEventListener('click', () => {
+            if (!allSeniorsAdmin.length) { showToast('No seniors to export.', 'error'); return; }
+            const rows = [['Name', 'Department', 'Year', 'Code']];
+            allSeniorsAdmin.forEach(s => rows.push([s.name, s.department || '', s.year || '', s.code]));
+            const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = 'farewell_codes.csv'; a.click();
+        });
+
+        $('btn-refresh-seniors').addEventListener('click', loadSeniors);
+
+        // ── MEMORIES ─────────────────────────────────────────────────
+        async function loadMemoriesAdmin() {
+            try {
+                const snap = await getDocs(collection(db, 'memories'));
+                const grid = $('memories-admin-grid');
+                grid.innerHTML = '';
+                if (snap.empty) { grid.innerHTML = '<p style="opacity:0.4;font-size:0.85rem">No memories uploaded yet.</p>'; return; }
+                snap.docs.forEach(d => {
+                    const mem = { id: d.id, ...d.data() };
+                    const item = document.createElement('div');
+                    item.className = 'preview-item';
+                    item.innerHTML = `
+        <img src="${mem.photo_url}" alt="${mem.caption || 'Memory'}" loading="lazy"/>
+        <button class="preview-remove-btn" data-id="${mem.id}" data-url="${mem.photo_url}" title="Delete">✕</button>
+      `;
+                    item.querySelector('.preview-remove-btn').addEventListener('click', () => deleteMemory(mem.id, mem.photo_url));
+                    grid.appendChild(item);
+                });
+            } catch (e) { showToast('Failed to load memories.', 'error'); }
+        }
+
+        async function deleteMemory(id, url) {
+            const ok = await confirmDialog('Delete Memory', 'This photo will be permanently removed.');
+            if (!ok) return;
+            try {
+                try { await deleteObject(storageRef(storage, `memories/${id}.jpg`)); } catch (e) { }
+                await deleteDoc(doc(db, 'memories', id));
+                showToast('Memory deleted.', 'success');
+                loadMemoriesAdmin();
+            } catch (e) { showToast('Failed to delete.', 'error'); }
+        }
+
+        $('btn-upload-memories').addEventListener('click', async () => {
+            const files = $('mem-photos').files;
+            const target = $('mem-target').value;
+            const caption = $('mem-caption').value.trim();
+            if (!files.length) { $('mem-error').textContent = 'Please select at least one photo.'; return; }
+
+            const btn = $('btn-upload-memories');
+            btn.disabled = true; btn.textContent = 'Uploading…';
+            $('mem-error').textContent = '';
+
+            try {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const memRef = await addDoc(collection(db, 'memories'), { target, photo_url: '', caption, uploaded_at: serverTimestamp() });
+                    const sRef = storageRef(storage, `memories/${memRef.id}.jpg`);
+                    const url = await new Promise((res, rej) => {
+                        const task = uploadBytesResumable(sRef, file);
+                        task.on('state_changed',
+                            s2 => { $('mem-upload-bar').style.width = (s2.bytesTransferred / s2.totalBytes * 100) + '%'; },
+                            rej,
+                            async () => res(await getDownloadURL(task.snapshot.ref))
+                        );
+                    });
+                    await updateDoc(memRef, { photo_url: url });
+                    $('mem-upload-bar').style.width = ((i + 1) / files.length * 100) + '%';
+                }
+                showToast(`${files.length} photo(s) uploaded!`, 'success');
+                $('mem-photos').value = ''; $('mem-photo-count').textContent = '';
+                $('mem-upload-bar').style.width = '0%';
+                loadMemoriesAdmin();
+            } catch (e) { $('mem-error').textContent = 'Upload failed: ' + e.message; }
+            finally { btn.disabled = false; btn.textContent = 'Upload Photos'; }
+        });
+
+        $('btn-refresh-memories').addEventListener('click', loadMemoriesAdmin);
+
+        // ── SETTINGS ─────────────────────────────────────────────────
+        async function loadSettings() {
+            try {
+                const snap = await getDoc(doc(db, 'settings', 'global'));
+                if (snap.exists()) {
+                    const s = snap.data();
+                    $('toggle-wall-open').checked = !!s.autograph_open;
+                    updateWallBadge(!!s.autograph_open);
+                    $('settings-dept').value = s.department || '';
+                    $('settings-year').value = s.batch_year || '';
+                }
+            } catch (e) { }
+        }
+
+        function updateWallBadge(open) {
+            const badge = $('wall-status-badge');
+            badge.textContent = open ? 'OPEN' : 'CLOSED';
+            badge.className = `status-badge ${open ? 'open' : 'closed'}`;
+        }
+
+        $('toggle-wall-open').addEventListener('change', async function () {
+            try {
+                await setDoc(doc(db, 'settings', 'global'), { autograph_open: this.checked }, { merge: true });
+                updateWallBadge(this.checked);
+                showToast(`Autograph wall ${this.checked ? 'opened' : 'closed'}.`, 'success');
+            } catch (e) { showToast('Failed to update.', 'error'); this.checked = !this.checked; }
+        });
+
+        $('btn-save-settings').addEventListener('click', async () => {
+            const dept = $('settings-dept').value.trim();
+            const year = $('settings-year').value.trim();
+            if (!dept || !year) { $('settings-msg').style.color = '#e07a7a'; $('settings-msg').textContent = 'Both fields required.'; return; }
+            try {
+                await setDoc(doc(db, 'settings', 'global'), { department: dept, batch_year: year }, { merge: true });
+                $('settings-msg').style.color = 'var(--gold)'; $('settings-msg').textContent = 'Saved!';
+                setTimeout(() => $('settings-msg').textContent = '', 3000);
+                showToast('Settings saved.', 'success');
+            } catch (e) { $('settings-msg').style.color = '#e07a7a'; $('settings-msg').textContent = 'Failed.'; }
+        });
+
+        // ── MESSAGES ─────────────────────────────────────────────────
+        let allMsgs = [];
+
+        async function loadMessagesAdmin() {
+            try {
+                const snap = await getDocs(query(collection(db, 'messages'), orderBy('timestamp', 'desc')));
+                allMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderMessagesTable();
+            } catch (e) { showToast('Failed to load messages.', 'error'); }
+        }
+
+        function renderMessagesTable() {
+            const toFilter = $('filter-to').value;
+            const fromFilter = $('filter-from').value;
+            const filtered = allMsgs.filter(m =>
+                (!toFilter || m.to_senior_id === toFilter) &&
+                (!fromFilter || m.from_senior_id === fromFilter)
+            );
+            const tbody = $('messages-tbody');
+            tbody.innerHTML = '';
+            if (!filtered.length) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;opacity:0.4;padding:2rem">No messages found</td></tr>';
+                return;
+            }
+            filtered.forEach(m => {
+                const date = m.timestamp?.toDate ? m.timestamp.toDate().toLocaleDateString() : '—';
+                const tr = document.createElement('tr');
+                tr.className = 'msg-row';
+                tr.innerHTML = `
+      <td>${m.to_name || '—'}</td>
+      <td>${m.from_name || '—'}</td>
+      <td title="${m.message_text}">${m.message_text}</td>
+      <td style="white-space:nowrap">${date}</td>
+    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSeniorDropdowns() {
+            const filterTo = $('filter-to');
+            const filterFrom = $('filter-from');
+            const memTarget = $('mem-target');
+            filterTo.innerHTML = '<option value="">All Recipients</option>';
+            filterFrom.innerHTML = '<option value="">All Senders</option>';
+            memTarget.innerHTML = '<option value="all">Shared — All Seniors</option>';
+            allSeniorsAdmin.forEach(s => {
+                filterTo.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                filterFrom.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+                memTarget.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+            filterTo.addEventListener('change', renderMessagesTable);
+            filterFrom.addEventListener('change', renderMessagesTable);
+        }
+
+        $('btn-refresh-messages').addEventListener('click', loadMessagesAdmin);
+
+        // ── Load All ──────────────────────────────────────────────────
+        async function loadAll() {
+            await Promise.all([loadSeniors(), loadSettings(), loadMemoriesAdmin(), loadMessagesAdmin()]);
+        }
+    </script>
+</body>
+
+</html>
