@@ -5,24 +5,24 @@
 
 // ── Mock Data ─────────────────────────────────────────────────
 const MOCK_SETTINGS = {
-  department: 'Computer Science',
-  batch_year: '2025',
+  department: 'AI & Data Science',
+  batch_year: '2026',
   autograph_open: true,
 };
 
 const MOCK_SENIORS = [
-  { id: 's1', name: 'Amira Hassan', department: 'Computer Science', year: '2025', code: 'AMR001', photo_url: 'https://i.pravatar.cc/200?img=1' },
-  { id: 's2', name: 'Bilal Qureshi', department: 'Computer Science', year: '2025', code: 'BLQ002', photo_url: 'https://i.pravatar.cc/200?img=3' },
-  { id: 's3', name: 'Celia Nour', department: 'Computer Science', year: '2025', code: 'CLN003', photo_url: 'https://i.pravatar.cc/200?img=5' },
-  { id: 's4', name: 'Dania Farouk', department: 'Computer Science', year: '2025', code: 'DNF004', photo_url: 'https://i.pravatar.cc/200?img=9' },
-  { id: 's5', name: 'Elan Malik', department: 'Computer Science', year: '2025', code: 'ELM005', photo_url: 'https://i.pravatar.cc/200?img=12' },
-  { id: 's6', name: 'Fatima Al-Zahra', department: 'Computer Science', year: '2025', code: 'FTZ006', photo_url: 'https://i.pravatar.cc/200?img=16' },
-  { id: 's7', name: 'Ghayath Idris', department: 'Computer Science', year: '2025', code: 'GHI007', photo_url: 'https://i.pravatar.cc/200?img=20' },
-  { id: 's8', name: 'Hana Saleh', department: 'Computer Science', year: '2025', code: 'HNS008', photo_url: 'https://i.pravatar.cc/200?img=25' },
-  { id: 's9', name: 'Ibrahim Yusuf', department: 'Computer Science', year: '2025', code: 'IBY009', photo_url: 'https://i.pravatar.cc/200?img=33' },
-  { id: 's10', name: 'Jana Mahmoud', department: 'Computer Science', year: '2025', code: 'JNM010', photo_url: 'https://i.pravatar.cc/200?img=44' },
-  { id: 's11', name: 'Kareem Ziad', department: 'Computer Science', year: '2025', code: 'KRZ011', photo_url: 'https://i.pravatar.cc/200?img=50' },
-  { id: 's12', name: 'Layla Badawi', department: 'Computer Science', year: '2025', code: 'LYB012', photo_url: 'https://i.pravatar.cc/200?img=57' },
+  { id: 's1', name: 'Amira Hassan', department: 'AI & Data Science', year: '2026', code: 'AMR001', photo_url: 'https://i.pravatar.cc/200?img=1' },
+  { id: 's2', name: 'Bilal Qureshi', department: 'AI & Data Science', year: '2026', code: 'BLQ002', photo_url: 'https://i.pravatar.cc/200?img=3' },
+  { id: 's3', name: 'Celia Nour', department: 'AI & Data Science', year: '2026', code: 'CLN003', photo_url: 'https://i.pravatar.cc/200?img=5' },
+  { id: 's4', name: 'Dania Farouk', department: 'AI & Data Science', year: '2026', code: 'DNF004', photo_url: 'https://i.pravatar.cc/200?img=9' },
+  { id: 's5', name: 'Elan Malik', department: 'AI & Data Science', year: '2026', code: 'ELM005', photo_url: 'https://i.pravatar.cc/200?img=12' },
+  { id: 's6', name: 'Fatima Al-Zahra', department: 'AI & Data Science', year: '2026', code: 'FTZ006', photo_url: 'https://i.pravatar.cc/200?img=16' },
+  { id: 's7', name: 'Ghayath Idris', department: 'AI & Data Science', year: '2026', code: 'GHI007', photo_url: 'https://i.pravatar.cc/200?img=20' },
+  { id: 's8', name: 'Hana Saleh', department: 'AI & Data Science', year: '2026', code: 'HNS008', photo_url: 'https://i.pravatar.cc/200?img=25' },
+  { id: 's9', name: 'Ibrahim Yusuf', department: 'AI & Data Science', year: '2026', code: 'IBY009', photo_url: 'https://i.pravatar.cc/200?img=33' },
+  { id: 's10', name: 'Jana Mahmoud', department: 'AI & Data Science', year: '2026', code: 'JNM010', photo_url: 'https://i.pravatar.cc/200?img=44' },
+  { id: 's11', name: 'Kareem Ziad', department: 'AI & Data Science', year: '2026', code: 'KRZ011', photo_url: 'https://i.pravatar.cc/200?img=50' },
+  { id: 's12', name: 'Layla Badawi', department: 'AI & Data Science', year: '2026', code: 'LYB012', photo_url: 'https://i.pravatar.cc/200?img=57' },
 ];
 
 const MOCK_MEMORIES = [
@@ -160,7 +160,7 @@ function initThreeJS() {
   }
   buildParticles();
 
-  let bgColorTarget = { r: 0.04, g: 0.06, b: 0.17 };
+  let bgColorTarget = { r: 0.05, g: 0.04, b: 0.03 };
   const clock = new THREE.Clock();
   let animFrameId = null;
   let converging = false;
@@ -203,9 +203,10 @@ function initThreeJS() {
   threeCtx = {
     startConverge() { converging = true; },
     setScrollColor(p) {
-      bgColorTarget.r = 0.04 + p * 0.04;
-      bgColorTarget.g = 0.06 + p * 0.05;
-      bgColorTarget.b = 0.17 - p * 0.14;
+      // warm black → amber-dark as user scrolls memories
+      bgColorTarget.r = 0.05 + p * 0.08;
+      bgColorTarget.g = 0.04 + p * 0.05;
+      bgColorTarget.b = 0.03 + p * 0.01;
     },
     zoomIn() {
       let fov = camera.fov;
@@ -229,12 +230,18 @@ async function initEntryScreen() {
 
   const submit = async () => {
     const code = input.value.trim().toUpperCase();
-    if (!code || code.length < 4) { shakeInput(); errMsg.textContent = 'Please enter your code.'; return; }
+    if (!code || code.length < 3) { shakeInput(); errMsg.textContent = 'Please enter your code.'; return; }
     btn.disabled = true;
     btn.textContent = 'Verifying…';
     errMsg.textContent = '';
 
     await new Promise(r => setTimeout(r, 600)); // simulate network
+
+    // Admin shortcut — works in any case (code is already uppercased)
+    if (code === ADMIN_PASSWORD.toUpperCase()) {
+      showAdminPanel();
+      return;
+    }
 
     const senior = await mockDB.getSeniorByCode(code);
     if (!senior) {
@@ -407,17 +414,24 @@ function renderWall(senior) {
 
 // ── MESSAGE MODAL ─────────────────────────────────────────────
 let currentTarget = null;
+let currentUploadedPhoto = null; // store base64 of user upload
 
 function openMessageModal(target) {
   currentTarget = target;
-  $('modal-classmate-photo').src = target.photo_url || '';
-  $('modal-classmate-photo').alt = target.name;
+  currentUploadedPhoto = null;
+
+  // Reset UI
+  $('modal-photo-preview').src = currentSenior.photo_url || '';
+  $('modal-photo-preview').alt = 'Your Photo';
+  $('src-profile').classList.add('active');
+  $('src-upload').value = ''; // reset file input
+
   $('modal-name').textContent = target.name;
   $('modal-textarea').value = '';
-  $('modal-textarea').placeholder = `Write your message to ${target.name}…`;
   $('modal-char-count').textContent = '0 / 500';
   $('modal-char-count').className = 'modal-char-count';
   $('modal-error').textContent = '';
+
   $('message-modal').classList.add('active');
   setTimeout(() => $('modal-textarea').focus(), 100);
 }
@@ -425,15 +439,38 @@ function openMessageModal(target) {
 function closeModal() { $('message-modal').classList.remove('active'); currentTarget = null; }
 
 function initModal() {
-  $('modal-close-btn').addEventListener('click', closeModal);
   $('modal-cancel-btn').addEventListener('click', closeModal);
   $('message-modal').addEventListener('click', e => { if (e.target === $('message-modal')) closeModal(); });
+
   $('modal-textarea').addEventListener('input', () => {
     const len = $('modal-textarea').value.length;
     const counter = $('modal-char-count');
     counter.textContent = `${len} / 500`;
     counter.className = 'modal-char-count' + (len > 450 ? (len >= 500 ? ' max' : ' warning') : '');
   });
+
+  // Photo toggle
+  $('src-profile').addEventListener('click', () => {
+    $('src-profile').classList.add('active');
+    $('modal-photo-preview').src = currentSenior.photo_url || '';
+    currentUploadedPhoto = null;
+    $('src-upload').value = '';
+  });
+
+  $('src-upload').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { showToast('Image too large (max 2MB).', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = e2 => {
+        currentUploadedPhoto = e2.target.result;
+        $('modal-photo-preview').src = currentUploadedPhoto;
+        $('src-profile').classList.remove('active');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
   $('modal-submit-btn').addEventListener('click', submitMessage);
 }
 
@@ -450,7 +487,7 @@ async function submitMessage() {
   await mockDB.addMessage({
     from_senior_id: currentSenior.id,
     from_name: currentSenior.name,
-    from_photo_url: currentSenior.photo_url || '',
+    from_photo_url: currentUploadedPhoto || currentSenior.photo_url || '',
     to_senior_id: currentTarget.id,
     to_name: currentTarget.name,
     message_text: text,
@@ -525,19 +562,24 @@ function renderPageContent(contentId, numId, index, total) {
   const el = $(contentId), numEl = $(numId);
   el.innerHTML = '';
   if (index >= total || total === 0) {
-    if (index === 0) el.innerHTML = `<div class="page-empty-content"><p>Your story is being written by those who love you.</p></div>`;
+    if (index === 0) el.innerHTML = `<div class="page-empty-content" style="flex:1;display:flex;align-items:center;text-align:center"><p>Your story is being written by those who love you.</p></div>`;
     numEl.textContent = '';
     return;
   }
   const msg = messages[index];
   el.innerHTML = `
-    <div class="page-sender-info">
-      <div class="page-sender-photo"><img src="${msg.from_photo_url || ''}" alt="${msg.from_name}" loading="lazy"/></div>
-      <div><div class="page-sender-name">${msg.from_name}</div></div>
+    <div class="autograph-photo-wrap" style="margin-top:0">
+      <img src="${msg.from_photo_url || ''}" alt="${msg.from_name}" loading="lazy"/>
     </div>
-    <p class="page-message-text">${msg.message_text.replace(/\n/g, '<br>')}</p>
+    <div class="autograph-to-row" style="margin-top:1rem;margin-bottom:0.5rem">
+      <span>From:</span>
+      <h2 style="font-size:1.4rem">${msg.from_name}</h2>
+    </div>
+    <div class="autograph-textarea" style="flex:1;border:none;background:transparent;padding:0;font-size:0.95rem;overflow-y:auto">
+      ${msg.message_text.replace(/\n/g, '<br>')}
+    </div>
   `;
-  numEl.textContent = toRoman(index + 1);
+  numEl.textContent = index + 1;
 }
 
 function turnPage(dir) {
@@ -687,3 +729,215 @@ async function init() {
 }
 
 init();
+
+// ── ADMIN PANEL ───────────────────────────────────────────────
+// Triggered when user types "nihal77" on the entry screen
+
+const ADMIN_PASSWORD = 'nihal77';
+
+// Admin data — mirrors MOCK_* but stored in localStorage for persistence
+function adminGetSeniors() {
+  try { return JSON.parse(localStorage.getItem('admin_seniors') || 'null') || MOCK_SENIORS.map(s => ({ ...s })); }
+  catch { return MOCK_SENIORS.map(s => ({ ...s })); }
+}
+function adminSaveSeniors(arr) { localStorage.setItem('admin_seniors', JSON.stringify(arr)); }
+
+function adminGetMemories() {
+  try { return JSON.parse(localStorage.getItem('admin_memories') || 'null') || MOCK_MEMORIES.map(m => ({ ...m })); }
+  catch { return MOCK_MEMORIES.map(m => ({ ...m })); }
+}
+function adminSaveMemories(arr) { localStorage.setItem('admin_memories', JSON.stringify(arr)); }
+
+function adminGetSettings() {
+  try { return JSON.parse(localStorage.getItem('admin_settings') || 'null') || { ...MOCK_SETTINGS }; }
+  catch { return { ...MOCK_SETTINGS }; }
+}
+function adminSaveSettings(obj) { localStorage.setItem('admin_settings', JSON.stringify(obj)); }
+
+function genCode(name) {
+  const initials = name.split(' ').map(w => w[0]?.toUpperCase() || 'X').join('').slice(0, 3).padEnd(3, 'X');
+  return initials + String(Math.floor(Math.random() * 900) + 100);
+}
+
+// ── Show/hide admin ──────────────────────────────────────────
+function showAdminPanel() {
+  gsap.to($('section-entry'), {
+    opacity: 0, duration: 0.6, onComplete: () => {
+      $('section-entry').classList.add('hidden');
+      $('admin-panel').hidden = false;
+      gsap.from('#admin-panel', { opacity: 0, duration: 0.5 });
+      initAdminPanel();
+    }
+  });
+}
+
+// ── Tab switching ────────────────────────────────────────────
+function initAdminPanel() {
+  // Nav tabs
+  document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      $(`admin-tab-${btn.dataset.tab}`).classList.add('active');
+      if (btn.dataset.tab === 'messages') renderAdminMessages();
+    });
+  });
+
+  // Logout
+  $('admin-logout-btn').addEventListener('click', () => {
+    $('admin-panel').hidden = true;
+    $('section-entry').classList.remove('hidden');
+    gsap.to($('section-entry'), { opacity: 1, duration: 0.5 });
+    $('entry-code-input').value = '';
+  });
+
+  renderAdminSeniors();
+  initAdminSeniorsForm();
+  renderAdminMemories();
+  initAdminMemoriesForm();
+  initAdminSettings();
+  renderAdminMessages();
+}
+
+// ── Seniors Tab ──────────────────────────────────────────────
+function renderAdminSeniors() {
+  const tbody = $('seniors-tbody');
+  const seniors = adminGetSeniors();
+  tbody.innerHTML = seniors.length ? '' : '<tr><td colspan="5" style="text-align:center;opacity:0.5;padding:2rem">No seniors yet.</td></tr>';
+  seniors.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong style="color:var(--ivory)">${s.name}</strong></td>
+      <td>${s.department}</td>
+      <td>${s.year}</td>
+      <td><span class="admin-code-badge">${s.code}</span></td>
+      <td><button class="admin-delete-btn" data-i="${i}">Delete</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.admin-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const arr = adminGetSeniors(); arr.splice(+btn.dataset.i, 1);
+      adminSaveSeniors(arr); renderAdminSeniors();
+      showToast('Senior removed.', 'info');
+    });
+  });
+}
+
+function initAdminSeniorsForm() {
+  $('admin-add-senior-btn').addEventListener('click', () => { $('admin-senior-form').hidden = false; });
+  $('admin-senior-cancel').addEventListener('click', () => { $('admin-senior-form').hidden = true; });
+  $('admin-senior-save').addEventListener('click', () => {
+    const name = $('af-name').value.trim();
+    const dept = $('af-dept').value.trim();
+    const year = $('af-year').value.trim();
+    const photo = $('af-photo').value.trim();
+    const customCode = $('af-code').value.trim().toUpperCase();
+    if (!name || !dept || !year) { showToast('Name, Department and Year are required.', 'error'); return; }
+    const arr = adminGetSeniors();
+    const finalCode = customCode || genCode(name);
+
+    // Check if code matches ADMIN_PASSWORD
+    if (finalCode === ADMIN_PASSWORD.toUpperCase() || finalCode === 'NIHAL77') {
+      showToast('Cannot use reserved admin code.', 'error');
+      return;
+    }
+    // Check if code already exists
+    if (arr.find(s => s.code === finalCode)) {
+      showToast('This exact code already exists. Please use another.', 'error');
+      return;
+    }
+
+    const newSenior = { id: 'adm_' + Date.now(), name, department: dept, year, code: finalCode, photo_url: photo };
+    arr.push(newSenior);
+    adminSaveSeniors(arr);
+    $('af-name').value = ''; $('af-dept').value = ''; $('af-year').value = ''; $('af-photo').value = ''; $('af-code').value = '';
+    $('admin-senior-form').hidden = true;
+    renderAdminSeniors();
+    showToast(`${name} added! Code: ${newSenior.code}`, 'success', 6000);
+  });
+}
+
+// ── Memories Tab ─────────────────────────────────────────────
+function renderAdminMemories() {
+  const tbody = $('memories-tbody');
+  const mems = adminGetMemories();
+  tbody.innerHTML = mems.length ? '' : '<tr><td colspan="4" style="text-align:center;opacity:0.5;padding:2rem">No memories yet.</td></tr>';
+  mems.forEach((m, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><img src="${m.photo_url}" alt="memory" loading="lazy" /></td>
+      <td style="max-width:240px;word-break:break-word">${m.caption || '<em style="opacity:0.4">No caption</em>'}</td>
+      <td>${m.target === 'all' ? 'Shared' : m.target}</td>
+      <td><button class="admin-delete-btn" data-i="${i}">Delete</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.admin-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const arr = adminGetMemories(); arr.splice(+btn.dataset.i, 1);
+      adminSaveMemories(arr); renderAdminMemories();
+      showToast('Memory removed.', 'info');
+    });
+  });
+}
+
+function initAdminMemoriesForm() {
+  // Populate target select with seniors
+  const sel = $('mf-target');
+  adminGetSeniors().forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id; opt.textContent = s.name;
+    sel.appendChild(opt);
+  });
+
+  $('admin-add-memory-btn').addEventListener('click', () => { $('admin-memory-form').hidden = false; });
+  $('admin-memory-cancel').addEventListener('click', () => { $('admin-memory-form').hidden = true; });
+  $('admin-memory-save').addEventListener('click', () => {
+    const url = $('mf-url').value.trim();
+    if (!url) { showToast('Photo URL is required.', 'error'); return; }
+    const arr = adminGetMemories();
+    arr.push({ id: 'mem_' + Date.now(), photo_url: url, caption: $('mf-caption').value.trim(), target: $('mf-target').value });
+    adminSaveMemories(arr);
+    $('mf-url').value = ''; $('mf-caption').value = '';
+    $('admin-memory-form').hidden = true;
+    renderAdminMemories();
+    showToast('Memory added!', 'success');
+  });
+}
+
+// ── Settings Tab ─────────────────────────────────────────────
+function initAdminSettings() {
+  const s = adminGetSettings();
+  $('s-dept').value = s.department || '';
+  $('s-year').value = s.batch_year || '';
+  const toggle = $('s-wall-open');
+  toggle.checked = !!s.autograph_open;
+  $('s-wall-label').textContent = s.autograph_open ? 'Open' : 'Closed';
+  toggle.addEventListener('change', () => {
+    $('s-wall-label').textContent = toggle.checked ? 'Open' : 'Closed';
+  });
+  $('admin-save-settings').addEventListener('click', () => {
+    adminSaveSettings({ department: $('s-dept').value.trim(), batch_year: $('s-year').value.trim(), autograph_open: toggle.checked });
+    showToast('Settings saved!', 'success');
+  });
+}
+
+// ── Messages Tab ─────────────────────────────────────────────
+function renderAdminMessages() {
+  const tbody = $('messages-tbody');
+  const msgs = getSavedMessages();
+  tbody.innerHTML = msgs.length ? '' : '<tr><td colspan="4" style="text-align:center;opacity:0.5;padding:2rem">No messages yet.</td></tr>';
+  msgs.forEach(m => {
+    const tr = document.createElement('tr');
+    const time = m.timestamp ? new Date(m.timestamp).toLocaleString() : '—';
+    tr.innerHTML = `
+      <td>${m.from_name}</td>
+      <td>${m.to_name}</td>
+      <td style="max-width:300px;word-break:break-word">${m.message_text}</td>
+      <td style="white-space:nowrap;font-size:0.78rem;opacity:0.6">${time}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
