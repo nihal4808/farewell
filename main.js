@@ -759,6 +759,36 @@ function genCode(name) {
   return initials + String(Math.floor(Math.random() * 900) + 100);
 }
 
+// ── File Upload Helper ─────────────────────────────────────────
+function attachImageUpload(fileInputId, hiddenInputId, previewId) {
+  const fileInput = $(fileInputId);
+  const hiddenInput = $(hiddenInputId);
+  const previewDiv = $(previewId);
+  if (!fileInput || !hiddenInput || !previewDiv) return;
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Image too large. Please use under 2MB.', 'error');
+        fileInput.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        hiddenInput.value = ev.target.result;
+        previewDiv.style.display = 'block';
+        previewDiv.querySelector('img').src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      hiddenInput.value = '';
+      previewDiv.style.display = 'none';
+      previewDiv.querySelector('img').src = '';
+    }
+  });
+}
+
 // ── Show/hide admin ──────────────────────────────────────────
 function showAdminPanel() {
   gsap.to($('section-entry'), {
@@ -798,9 +828,14 @@ function initAdminPanel() {
   initAdminMemoriesForm();
   initAdminSettings();
   renderAdminMessages();
+
+  attachImageUpload('af-photo-file', 'af-photo', 'af-photo-preview');
+  attachImageUpload('am-photo-file', 'mf-url', 'am-photo-preview');
 }
 
 // ── Seniors Tab ──────────────────────────────────────────────
+let editingSeniorId = null;
+
 function renderAdminSeniors() {
   const tbody = $('seniors-tbody');
   const seniors = adminGetSeniors();
@@ -812,10 +847,42 @@ function renderAdminSeniors() {
       <td>${s.department}</td>
       <td>${s.year}</td>
       <td><span class="admin-code-badge">${s.code}</span></td>
-      <td><button class="admin-delete-btn" data-i="${i}">Delete</button></td>
+      <td>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="admin-edit-btn" data-i="${i}" style="background:transparent;border:1px solid rgba(201,168,76,0.5);color:#c9a84c;padding:0.25rem 0.5rem;border-radius:4px;cursor:pointer;font-family:var(--font-display);font-size:0.85rem">Edit</button>
+          <button class="admin-delete-btn" data-i="${i}">Delete</button>
+        </div>
+      </td>
     `;
     tbody.appendChild(tr);
   });
+
+  tbody.querySelectorAll('.admin-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const arr = adminGetSeniors();
+      const s = arr[+btn.dataset.i];
+      editingSeniorId = s.id;
+      $('af-name').value = s.name;
+      const settings = adminGetSettings();
+      $('af-dept').value = settings.department;
+      $('af-dept').disabled = true;
+      $('af-year').value = settings.batch_year;
+      $('af-year').disabled = true;
+      $('af-photo').value = s.photo_url || '';
+      if ($('af-photo-file')) $('af-photo-file').value = '';
+      if (s.photo_url) {
+        $('af-photo-preview').style.display = 'block';
+        $('af-photo-preview').querySelector('img').src = s.photo_url;
+      } else {
+        $('af-photo-preview').style.display = 'none';
+        $('af-photo-preview').querySelector('img').src = '';
+      }
+      $('af-code').value = s.code;
+      if ($('form-title-senior')) $('form-title-senior').textContent = "Edit Senior";
+      $('admin-senior-form').hidden = false;
+    });
+  });
+
   tbody.querySelectorAll('.admin-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const arr = adminGetSeniors(); arr.splice(+btn.dataset.i, 1);
@@ -826,12 +893,30 @@ function renderAdminSeniors() {
 }
 
 function initAdminSeniorsForm() {
-  $('admin-add-senior-btn').addEventListener('click', () => { $('admin-senior-form').hidden = false; });
+  $('admin-add-senior-btn').addEventListener('click', () => {
+    editingSeniorId = null;
+    $('af-name').value = '';
+    $('af-photo').value = '';
+    if ($('af-photo-file')) $('af-photo-file').value = '';
+    if ($('af-photo-preview')) {
+      $('af-photo-preview').style.display = 'none';
+      $('af-photo-preview').querySelector('img').src = '';
+    }
+    $('af-code').value = '';
+    if ($('form-title-senior')) $('form-title-senior').textContent = "New Senior";
+    const s = adminGetSettings();
+    $('af-dept').value = s.department;
+    $('af-dept').disabled = true;
+    $('af-year').value = s.batch_year;
+    $('af-year').disabled = true;
+    $('admin-senior-form').hidden = false;
+  });
   $('admin-senior-cancel').addEventListener('click', () => { $('admin-senior-form').hidden = true; });
   $('admin-senior-save').addEventListener('click', () => {
     const name = $('af-name').value.trim();
-    const dept = $('af-dept').value.trim();
-    const year = $('af-year').value.trim();
+    const s = adminGetSettings();
+    const dept = s.department;
+    const year = s.batch_year;
     const photo = $('af-photo').value.trim();
     const customCode = $('af-code').value.trim().toUpperCase();
     if (!name || !dept || !year) { showToast('Name, Department and Year are required.', 'error'); return; }
@@ -843,19 +928,34 @@ function initAdminSeniorsForm() {
       showToast('Cannot use reserved admin code.', 'error');
       return;
     }
-    // Check if code already exists
-    if (arr.find(s => s.code === finalCode)) {
+    // Check if code already exists (skip if it's the current senior being edited)
+    if (arr.find(s => s.code === finalCode && s.id !== editingSeniorId)) {
       showToast('This exact code already exists. Please use another.', 'error');
       return;
     }
 
-    const newSenior = { id: 'adm_' + Date.now(), name, department: dept, year, code: finalCode, photo_url: photo };
-    arr.push(newSenior);
+    if (editingSeniorId) {
+      const idx = arr.findIndex(s => s.id === editingSeniorId);
+      if (idx !== -1) {
+        arr[idx] = { ...arr[idx], name, department: dept, year, code: finalCode, photo_url: photo };
+        showToast(`${name} updated!`, 'success', 3000);
+      }
+      editingSeniorId = null;
+    } else {
+      const newSenior = { id: 'adm_' + Date.now(), name, department: dept, year, code: finalCode, photo_url: photo };
+      arr.push(newSenior);
+      showToast(`${name} added! Code: ${newSenior.code}`, 'success', 6000);
+    }
+
     adminSaveSeniors(arr);
     $('af-name').value = ''; $('af-dept').value = ''; $('af-year').value = ''; $('af-photo').value = ''; $('af-code').value = '';
+    if ($('af-photo-file')) $('af-photo-file').value = '';
+    if ($('af-photo-preview')) {
+      $('af-photo-preview').style.display = 'none';
+      $('af-photo-preview').querySelector('img').src = '';
+    }
     $('admin-senior-form').hidden = true;
     renderAdminSeniors();
-    showToast(`${name} added! Code: ${newSenior.code}`, 'success', 6000);
   });
 }
 
@@ -896,14 +996,20 @@ function initAdminMemoriesForm() {
   $('admin-memory-cancel').addEventListener('click', () => { $('admin-memory-form').hidden = true; });
   $('admin-memory-save').addEventListener('click', () => {
     const url = $('mf-url').value.trim();
-    if (!url) { showToast('Photo URL is required.', 'error'); return; }
+    const caption = $('mf-caption').value.trim();
+    if (!url) { showToast('Image needed', 'error'); return; }
     const arr = adminGetMemories();
-    arr.push({ id: 'mem_' + Date.now(), photo_url: url, caption: $('mf-caption').value.trim(), target: $('mf-target').value });
+    arr.push({ id: 'mem_' + Date.now(), url, caption });
     adminSaveMemories(arr);
     $('mf-url').value = ''; $('mf-caption').value = '';
+    if ($('am-photo-file')) $('am-photo-file').value = '';
+    if ($('am-photo-preview')) {
+      $('am-photo-preview').style.display = 'none';
+      $('am-photo-preview').querySelector('img').src = '';
+    }
     $('admin-memory-form').hidden = true;
     renderAdminMemories();
-    showToast('Memory added!', 'success');
+    showToast('Memory added.', 'success');
   });
 }
 
