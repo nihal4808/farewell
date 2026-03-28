@@ -32,18 +32,26 @@ const SETTINGS_COL = 'settings';
 const SENIORS_COL = 'seniors';
 const MESSAGES_COL = 'messages';
 
+// Timeout wrapper to prevent hangs with invalid Firebase config
+const withTimeout = (promise, ms = 2000) => {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase Timeout')), ms))
+    ]);
+};
+
 export const mockDB = {
     // Settings
     async getSettings() {
         try {
             const docRef = doc(db, SETTINGS_COL, 'global');
-            const snap = await getDoc(docRef);
+            const snap = await withTimeout(getDoc(docRef));
             if (snap.exists()) return snap.data();
-            return { department: 'AI & Data Science', batch_year: '2026', autograph_open: true };
+            return MOCK_SETTINGS_DEFAULT;
         } catch (e) {
-            console.warn("Firebase not configured? Falling back to localStorage.", e);
+            console.warn("Firebase fallback triggered for settings.", e.message);
             const s = localStorage.getItem(MOCK_SETTINGS_KEY);
-            return s ? JSON.parse(s) : { department: 'AI & Data Science', batch_year: '2026', autograph_open: true };
+            return s ? JSON.parse(s) : MOCK_SETTINGS_DEFAULT;
         }
     },
     async saveSettings(data) {
@@ -56,20 +64,20 @@ export const mockDB = {
     async adminGetSeniors() {
         try {
             const q = query(collection(db, SENIORS_COL));
-            const snap = await getDocs(q);
+            const snap = await withTimeout(getDocs(q));
             if (!snap.empty) return snap.docs.map(d => ({ id: d.id, ...d.data() }));
             throw new Error("Empty Firestore");
         } catch (e) {
-            console.log("Using localStorage fallback for seniors");
+            console.log("Using localStorage fallback for seniors:", e.message);
             const s = localStorage.getItem(MOCK_SENIORS_KEY);
             return s ? JSON.parse(s) : MOCK_SENIORS_DEFAULT;
         }
     },
     async addSenior(senior) {
         try {
-            await addDoc(collection(db, SENIORS_COL), { ...senior, created_at: serverTimestamp() });
+            await withTimeout(addDoc(collection(db, SENIORS_COL), { ...senior, created_at: serverTimestamp() }));
         } catch (e) {
-            console.warn("Firestore add failed, saving to localStorage", e);
+            console.warn("Firestore add failed, saving to localStorage", e.message);
             const seniors = await this.adminGetSeniors();
             const newS = { ...senior, id: 's' + Date.now() };
             localStorage.setItem(MOCK_SENIORS_KEY, JSON.stringify([...seniors, newS]));
@@ -78,7 +86,7 @@ export const mockDB = {
     async updateSenior(id, data) {
         try {
             const docRef = doc(db, SENIORS_COL, id);
-            await updateDoc(docRef, data);
+            await withTimeout(updateDoc(docRef, data));
         } catch (e) {
             const seniors = await this.adminGetSeniors();
             const updated = seniors.map(s => s.id === id ? { ...s, ...data } : s);
@@ -87,7 +95,7 @@ export const mockDB = {
     },
     async deleteSenior(id) {
         try {
-            await deleteDoc(doc(db, SENIORS_COL, id));
+            await withTimeout(deleteDoc(doc(db, SENIORS_COL, id)));
         } catch (e) {
             const seniors = await this.adminGetSeniors();
             const filtered = seniors.filter(s => s.id !== id);
@@ -98,7 +106,7 @@ export const mockDB = {
     async getSeniorByCode(code) {
         try {
             const q = query(collection(db, SENIORS_COL), where("code", "==", code.toUpperCase()));
-            const snap = await getDocs(q);
+            const snap = await withTimeout(getDocs(q));
             if (!snap.empty) return { id: snap.docs[0].id, ...snap.docs[0].data() };
             throw new Error("Not found in Firestore");
         } catch (e) {
@@ -111,7 +119,7 @@ export const mockDB = {
     async getMessagesFor(toSeniorId) {
         try {
             const q = query(collection(db, MESSAGES_COL), where("to_senior_id", "==", toSeniorId));
-            const snap = await getDocs(q);
+            const snap = await withTimeout(getDocs(q));
             return snap.docs.map(d => ({ id: d.id, ...d.data() }));
         } catch (e) {
             const s = localStorage.getItem(MOCK_MESSAGES_KEY);
@@ -121,8 +129,9 @@ export const mockDB = {
     },
     async addMessage(msg) {
         try {
-            await addDoc(collection(db, MESSAGES_COL), { ...msg, timestamp: serverTimestamp() });
+            await withTimeout(addDoc(collection(db, MESSAGES_COL), { ...msg, timestamp: serverTimestamp() }));
         } catch (e) {
+            console.warn("Firestore message failed, saving to localStorage", e.message);
             const s = localStorage.getItem(MOCK_MESSAGES_KEY);
             const all = s ? JSON.parse(s) : [];
             localStorage.setItem(MOCK_MESSAGES_KEY, JSON.stringify([...all, { ...msg, id: 'm' + Date.now() }]));
