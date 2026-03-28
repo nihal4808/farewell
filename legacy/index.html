@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="description" content="A personalized farewell experience for your college department batch." />
+  <title>ALvida'26</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ── Three.js Background Canvas ── -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ── Toast Container ── -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ── Loading Overlay (PDF) ── -->
+  <div id="loading-overlay" role="dialog" aria-label="Generating PDF">
+    <svg class="loading-arabesque" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <use href="#arabesque-spinner" />
+    </svg>
+    <div class="loading-bar-wrap">
+      <div class="loading-bar" id="loading-bar" style="width:0%"></div>
+    </div>
+    <p class="loading-text">Crafting your autograph book…</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+     SECTION 1 — ENTRY SCREEN
+     ════════════════════════════════════════════════ -->
+  <section id="section-entry" aria-label="Entry">
+    <!-- Rotating arabesque bg -->
+    <div class="entry-rotating-bg">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <use href="#arabesque-full" />
+      </svg>
+    </div>
+
+    <!-- Entry Card -->
+    <div class="entry-card ornate-border arabesque-corners" role="main">
+      <!-- Ornate corner SVGs -->
+      <svg class="corner tl" viewBox="0 0 48 48">
+        <use href="#corner-ornament" />
+      </svg>
+      <svg class="corner tr" viewBox="0 0 48 48">
+        <use href="#corner-ornament" />
+      </svg>
+      <svg class="corner bl" viewBox="0 0 48 48">
+        <use href="#corner-ornament" />
+      </svg>
+      <svg class="corner br" viewBox="0 0 48 48">
+        <use href="#corner-ornament" />
+      </svg>
+
+      <h1 class="title-display title-xl entry-site-title" id="entry-site-title">ALvida'26</h1>
+      <p class="subtitle" id="entry-dept-year" style="display:none;"></p>
+      <p class="entry-subtitle">Enter your code to begin your journey</p>
+
+      <div class="entry-input-wrap">
+        <input type="text" id="entry-code-input" maxlength="7" placeholder="• • • • • •" autocomplete="off"
+          autocapitalize="characters" spellcheck="false" aria-label="Your unique access code" />
+        <div class="entry-error-msg" id="entry-error" role="alert" aria-atomic="true"></div>
+        <button class="btn-gold" id="btn-enter" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          Begin My Journey
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Senior name reveal overlay -->
+  <div id="name-reveal" aria-hidden="true">
+    <p id="name-reveal-text"></p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+     MAIN SITE WRAPPER (revealed after login)
+     ════════════════════════════════════════════════ -->
+  <div id="site-wrapper" hidden>
+
+    <!-- ── Section 2: Personal Landing ── -->
+    <section id="section-landing" class="section active" aria-label="Personal Landing">
+      <div class="profile-photo-wrap arabesque-corners">
+        <svg class="corner tl" viewBox="0 0 48 48">
+          <use href="#corner-ornament" />
+        </svg>
+        <svg class="corner tr" viewBox="0 0 48 48">
+          <use href="#corner-ornament" />
+        </svg>
+        <svg class="corner bl" viewBox="0 0 48 48">
+          <use href="#corner-ornament" />
+        </svg>
+        <svg class="corner br" viewBox="0 0 48 48">
+          <use href="#corner-ornament" />
+        </svg>
+        <div class="profile-photo-circle">
+          <img id="landing-photo" src="" alt="Your profile photo" loading="lazy" />
+        </div>
+      </div>
+      <h1 class="title-display title-xl landing-name" id="landing-name"></h1>
+      <p class="subtitle landing-class" id="landing-class"></p>
+
+      <div class="scroll-indicator" aria-hidden="true">
+        <span>Scroll to explore</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- ── Section 3: Memory Scroll ── -->
+    <section id="section-memories" class="section active" aria-label="Memory Scroll">
+      <div class="section-header">
+        <h2 class="title-display title-lg">Our Memories</h2>
+        <svg class="arabesque-line" viewBox="0 0 140 20" xmlns="http://www.w3.org/2000/svg">
+          <use href="#arabesque-line" />
+        </svg>
+      </div>
+      <div class="memories-grid" id="memories-grid">
+        <!-- injected by JS -->
+      </div>
+    </section>
+
+    <!-- ── Section 4: Autograph Wall ── -->
+    <section id="section-wall" class="section active" aria-label="Autograph Wall">
+      <div class="section-header">
+        <h2 class="title-display title-lg">Leave Your Mark</h2>
+        <svg class="arabesque-line" viewBox="0 0 140 20" xmlns="http://www.w3.org/2000/svg">
+          <use href="#arabesque-line" />
+        </svg>
+        <p class="subtitle" style="margin-top:0.75rem">Click a classmate to write them a message</p>
+      </div>
+
+      <!-- Closed overlay -->
+      <div class="wall-closed-overlay" id="wall-closed-overlay" hidden>
+        <div class="overlay-inner">
+          <svg viewBox="0 0 200 200">
+            <use href="#arabesque-full" />
+          </svg>
+          <p>The autograph wall opens soon.<br>Come back on the day.</p>
+        </div>
+      </div>
+
+      <div class="seniors-wall" id="seniors-wall" role="list">
+        <!-- injected by JS -->
+      </div>
+    </section>
+
+    <!-- ── Section 5: Autograph Book ── -->
+    <section id="section-book" class="section active" aria-label="Your Autograph Book">
+      <div class="section-header">
+        <h2 class="title-display title-lg">Your Book of Memories</h2>
+        <svg class="arabesque-line" viewBox="0 0 140 20">
+          <use href="#arabesque-line" />
+        </svg>
+        <p class="subtitle" style="margin-top:0.75rem">Messages written for you by your friends</p>
+      </div>
+
+      <div class="book-container" id="book-container">
+        <button class="book-nav-btn" id="book-prev" aria-label="Previous page">&#8592;</button>
+
+        <div class="book-spread" id="book-spread">
+          <!-- Left page -->
+          <article class="book-page page-left" style="opacity:1; transform:none;" id="book-page-left"
+            aria-label="Book page">
+            <div class="page-content" id="page-left-content" style="display:flex;flex-direction:column;height:100%">
+              <div class="page-empty-content" style="flex:1;display:flex;align-items:center;text-align:center">
+                <p>Your story is being written by those who love you.</p>
+              </div>
+            </div>
+            <div class="page-number" id="page-left-num"></div>
+          </article>
+
+          <!-- Right page -->
+          <article class="book-page page-right" style="opacity:1; transform:none;" id="book-page-right"
+            aria-label="Book page">
+            <div class="page-content" id="page-right-content" style="display:flex;flex-direction:column;height:100%">
+            </div>
+            <div class="page-number" id="page-right-num"></div>
+          </article>
+        </div>
+
+        <button class="book-nav-btn" id="book-next" aria-label="Next page">&#8594;</button>
+      </div>
+
+      <div class="book-info-row">
+        <span id="book-page-counter">Page — of —</span>
+      </div>
+    </section>
+
+    <!-- ── Section 6: PDF Download ── -->
+    <section id="section-download" class="section active" aria-label="Download">
+      <div class="pdf-sticky-wrap" style="text-align:center">
+        <button class="btn-gold" id="btn-download-pdf" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Download Your Autograph Book
+        </button>
+        <p style="margin-top:1rem;font-size:0.8rem;color:rgba(245,240,232,0.4);font-family:var(--font-body)">
+          Saves as a PDF — one message per page
+        </p>
+      </div>
+    </section>
+
+  </div><!-- /#site-wrapper -->
+
+  <!-- ════════════════════════════════════════════════
+     ADMIN PANEL (revealed on code "nihal77")
+     ════════════════════════════════════════════════ -->
+  <div id="admin-panel" hidden>
+    <div class="admin-shell">
+
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <div class="admin-logo">
+          <svg width="28" height="28" viewBox="0 0 48 48">
+            <use href="#arabesque-full" />
+          </svg>
+          <span>Admin</span>
+        </div>
+        <nav class="admin-nav">
+          <button class="admin-nav-btn active" data-tab="seniors">👥 Seniors</button>
+          <button class="admin-nav-btn" data-tab="memories">🖼 Memories</button>
+          <button class="admin-nav-btn" data-tab="settings">⚙️ Settings</button>
+          <button class="admin-nav-btn" data-tab="messages">💬 Messages</button>
+        </nav>
+        <button class="admin-logout-btn" id="admin-logout-btn">← Exit</button>
+      </aside>
+
+      <!-- Main content -->
+      <main class="admin-main">
+
+        <!-- TAB: Seniors -->
+        <section class="admin-tab active" id="admin-tab-seniors">
+          <div class="admin-tab-header">
+            <h2 class="admin-tab-title">Seniors</h2>
+            <button class="btn-gold btn-sm" id="admin-add-senior-btn">+ Add Senior</button>
+          </div>
+
+          <!-- Add form (collapsed by default) -->
+          <div class="admin-form-card" id="admin-senior-form" hidden>
+            <h3 id="form-title-senior"
+              style="color:var(--gold);font-family:var(--font-display);font-size:0.95rem;margin-bottom:1rem">New
+              Senior</h3>
+            <div class="admin-form-grid">
+              <div class="admin-field">
+                <label>Full Name *</label>
+                <input type="text" id="af-name" placeholder="e.g. Fatima Al-Zahra" />
+              </div>
+              <div class="admin-field">
+                <label>Department (Auto-filled from Settings) *</label>
+                <input type="text" id="af-dept" disabled title="Change in Settings tab" />
+              </div>
+              <div class="admin-field">
+                <label>Batch Year (Auto-filled from Settings) *</label>
+                <input type="text" id="af-year" disabled title="Change in Settings tab" />
+              </div>
+              <div class="admin-field">
+                <label>Photo Upload (Optional)</label>
+                <input type="file" id="af-photo-file" accept="image/*" />
+                <input type="hidden" id="af-photo" />
+                <div id="af-photo-preview" style="margin-top:0.5rem;max-width:80px;display:none;">
+                  <img src="" style="width:100%;height:auto;border-radius:4px;border:1px solid rgba(201,168,76,0.3);" />
+                </div>
+              </div>
+              <div class="admin-field">
+                <label>Custom Access Code (Optional)</label>
+                <input type="text" id="af-code" placeholder="Leave blank to auto-generate" maxlength="15" />
+              </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;justify-content:flex-end">
+              <button class="btn-ghost" id="admin-senior-cancel">Cancel</button>
+              <button class="btn-gold btn-sm" id="admin-senior-save">Save Senior</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="seniors-table">
+              <thead>
+                <tr>
+                  <th>NAME</th>
+                  <th>DEPARTMENT</th>
+                  <th>YEAR</th>
+                  <th>CODE</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="seniors-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB: Memories -->
+        <section class="admin-tab" id="admin-tab-memories">
+          <div class="admin-tab-header">
+            <h2 class="admin-tab-title">Memories</h2>
+            <button class="btn-gold btn-sm" id="admin-add-memory-btn">+ Add Memory</button>
+          </div>
+
+          <div class="admin-form-card" id="admin-memory-form" hidden>
+            <h3 style="color:var(--gold);font-family:var(--font-display);font-size:0.95rem;margin-bottom:1rem">New
+              Memory</h3>
+            <div class="admin-form-grid">
+              <div class="admin-field">
+                <label>Photo Upload *</label>
+                <input type="file" id="am-photo-file" accept="image/*" />
+                <input type="hidden" id="am-photo" />
+                <div id="am-photo-preview" style="margin-top:0.5rem;max-width:80px;display:none;">
+                  <img src="" style="width:100%;height:auto;border-radius:4px;border:1px solid rgba(201,168,76,0.3);" />
+                </div>
+              </div>
+              <div class="admin-field">
+                <label>Caption</label>
+                <input type="text" id="mf-caption" placeholder="Optional caption…" />
+              </div>
+              <div class="admin-field">
+                <label>Target</label>
+                <select id="mf-target">
+                  <option value="all">All Seniors (Shared)</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;justify-content:flex-end">
+              <button class="btn-ghost" id="admin-memory-cancel">Cancel</button>
+              <button class="btn-gold btn-sm" id="admin-memory-save">Save Memory</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="memories-table">
+              <thead>
+                <tr>
+                  <th>Preview</th>
+                  <th>Caption</th>
+                  <th>Target</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="memories-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB: Settings -->
+        <section class="admin-tab" id="admin-tab-settings">
+          <div class="admin-tab-header">
+            <h2 class="admin-tab-title">Settings</h2>
+          </div>
+          <div class="admin-settings-grid">
+            <div class="admin-setting-card">
+              <div>
+                <div class="admin-setting-label">Department Name</div>
+                <input type="text" class="admin-setting-input" id="s-dept" placeholder="Computer Science" />
+              </div>
+            </div>
+            <div class="admin-setting-card">
+              <div>
+                <div class="admin-setting-label">Batch Year</div>
+                <input type="text" class="admin-setting-input" id="s-year" placeholder="2025" />
+              </div>
+            </div>
+            <div class="admin-setting-card" style="grid-column:1/-1">
+              <div>
+                <div class="admin-setting-label">Autograph Wall</div>
+                <div style="display:flex;align-items:center;gap:1rem;margin-top:0.75rem">
+                  <label class="admin-toggle">
+                    <input type="checkbox" id="s-wall-open" />
+                    <span class="admin-toggle-slider"></span>
+                  </label>
+                  <span id="s-wall-label"
+                    style="font-family:var(--font-body);color:var(--ivory-dark);font-size:0.9rem">Closed</span>
+                </div>
+              </div>
+            </div>
+            <div style="grid-column:1/-1">
+              <button class="btn-gold btn-sm" id="admin-save-settings">Save Settings</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Messages -->
+        <section class="admin-tab" id="admin-tab-messages">
+          <div class="admin-tab-header">
+            <h2 class="admin-tab-title">All Messages</h2>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="messages-table">
+              <thead>
+                <tr>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Message</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="messages-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════
+     AUTOGRAPH CARD MODAL (Polaroid style)
+     ════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="message-modal" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+    <div class="autograph-card">
+      <div class="autograph-tape"></div>
+
+      <!-- Photo Area -->
+      <div class="autograph-photo-wrap">
+        <img id="modal-photo-preview" src="" alt="Photo" />
+        <div class="photo-src-toggle">
+          <button class="src-btn active" id="src-profile" type="button">Profile Photo</button>
+          <label class="src-btn" for="src-upload" style="color:var(--gold); border-color:var(--gold);">Upload Friendship
+            Photo</label>
+          <input type="file" id="src-upload" accept="image/*" hidden />
+        </div>
+      </div>
+
+      <!-- Recipient name -->
+      <div class="autograph-to-row">
+        <span>To:</span>
+        <h2 id="modal-name"></h2>
+      </div>
+
+      <!-- Message Area -->
+      <textarea class="autograph-textarea" id="modal-textarea" maxlength="500"
+        placeholder="Write your heartfelt message here…" rows="4" aria-label="Message"></textarea>
+      <div class="modal-char-count" id="modal-char-count">0 / 500</div>
+
+      <div class="autograph-actions">
+        <button class="btn-ghost autograph-cancel" id="modal-cancel-btn" type="button">Cancel</button>
+        <button class="btn-gold btn-sm" id="modal-submit-btn" type="button">Send Message</button>
+      </div>
+      <div id="modal-error" style="color:#e07a7a;font-size:0.82rem;min-height:1em;text-align:center;margin-top:0.5rem">
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+     SVG SYMBOL DEFS (all SVG assets inline)
+     ════════════════════════════════════════════════ -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+
+      <!-- Corner ornament (gold) -->
+      <symbol id="corner-ornament" viewBox="0 0 48 48">
+        <path d="M4 4 L4 18 Q4 4 18 4 Z" fill="none" stroke="#c9a84c" stroke-width="1.5" />
+        <path d="M4 4 L14 4 Q4 4 4 14 Z" fill="#c9a84c" opacity="0.2" />
+        <circle cx="4" cy="4" r="2" fill="#c9a84c" />
+        <path d="M8 4 Q16 4 16 12" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6" />
+        <path d="M4 8 Q4 16 12 16" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6" />
+      </symbol>
+
+      <!-- Corner ornament dark (for parchment pages) -->
+      <symbol id="corner-ornament-dark" viewBox="0 0 48 48">
+        <path d="M4 4 L4 18 Q4 4 18 4 Z" fill="none" stroke="#9a7a2e" stroke-width="1.5" />
+        <path d="M4 4 L14 4 Q4 4 4 14 Z" fill="#9a7a2e" opacity="0.15" />
+        <circle cx="4" cy="4" r="2" fill="#9a7a2e" />
+        <path d="M8 4 Q16 4 16 12" fill="none" stroke="#9a7a2e" stroke-width="0.8" opacity="0.5" />
+        <path d="M4 8 Q4 16 12 16" fill="none" stroke="#9a7a2e" stroke-width="0.8" opacity="0.5" />
+      </symbol>
+
+      <!-- Arabesque full pattern tile -->
+      <symbol id="arabesque-full" viewBox="0 0 400 400">
+        <g fill="none" stroke="#c9a84c" stroke-width="0.8">
+          <!-- Outer ring -->
+          <circle cx="200" cy="200" r="190" opacity="0.4" />
+          <circle cx="200" cy="200" r="160" opacity="0.3" />
+          <!-- 8-point star -->
+          <polygon
+            points="200,20 220,90 290,70 240,130 310,150 240,170 280,230 210,200 200,270 190,200 120,230 160,170 90,150 160,130 110,70 180,90"
+            opacity="0.5" />
+          <!-- Inner 8-point star -->
+          <polygon
+            points="200,60 215,120 270,100 230,150 285,168 228,180 262,228 204,205 200,262 196,205 138,228 172,180 115,168 170,150 130,100 185,120"
+            opacity="0.3" />
+          <!-- Radial lines -->
+          <line x1="200" y1="10" x2="200" y2="390" opacity="0.15" />
+          <line x1="10" y1="200" x2="390" y2="200" opacity="0.15" />
+          <line x1="57" y1="57" x2="343" y2="343" opacity="0.12" />
+          <line x1="343" y1="57" x2="57" y2="343" opacity="0.12" />
+          <!-- Petal circles -->
+          <circle cx="200" cy="50" r="30" opacity="0.2" />
+          <circle cx="350" cy="200" r="30" opacity="0.2" />
+          <circle cx="200" cy="350" r="30" opacity="0.2" />
+          <circle cx="50" cy="200" r="30" opacity="0.2" />
+          <circle cx="296" cy="104" r="22" opacity="0.18" />
+          <circle cx="296" cy="296" r="22" opacity="0.18" />
+          <circle cx="104" cy="296" r="22" opacity="0.18" />
+          <circle cx="104" cy="104" r="22" opacity="0.18" />
+          <!-- Center motif -->
+          <circle cx="200" cy="200" r="40" opacity="0.4" />
+          <circle cx="200" cy="200" r="24" opacity="0.3" />
+          <circle cx="200" cy="200" r="8" opacity="0.5" />
+        </g>
+      </symbol>
+
+      <!-- Arabesque spinner (for loading) -->
+      <symbol id="arabesque-spinner" viewBox="0 0 200 200">
+        <g fill="none" stroke="#c9a84c" stroke-width="1">
+          <circle cx="100" cy="100" r="90" opacity="0.5" />
+          <polygon
+            points="100,15 115,55 158,42 130,78 168,93 128,100 155,135 115,120 108,162 100,122 92,162 85,120 45,135 72,100 32,93 70,78 42,42 85,55"
+            opacity="0.6" />
+          <circle cx="100" cy="100" r="30" opacity="0.4" />
+          <circle cx="100" cy="100" r="12" opacity="0.6" />
+        </g>
+      </symbol>
+
+      <!-- Arabesque line divider -->
+      <symbol id="arabesque-line" viewBox="0 0 140 20">
+        <line x1="0" y1="10" x2="50" y2="10" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" />
+        <circle cx="70" cy="10" r="6" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.7" />
+        <circle cx="70" cy="10" r="2" fill="#c9a84c" opacity="0.7" />
+        <path d="M56 10 Q63 4 70 10 Q77 16 84 10" fill="none" stroke="#c9a84c" stroke-width="0.8" opacity="0.6" />
+        <line x1="90" y1="10" x2="140" y2="10" stroke="#c9a84c" stroke-width="0.8" opacity="0.5" />
+      </symbol>
+
+    </defs>
+  </svg>
+
+  <!-- ── Scripts ── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>

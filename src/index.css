@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --hs-bg: #FAF8F5;
+  --hs-orange: #F47B20;
+  --hs-yellow: #FFD166;
+  --hs-teal: #06D6A0;
+  --hs-navy: #2C3140;
+  --hs-white: #FFFFFF;
+  --hs-grey: #8A8E99;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--hs-bg);
+  color: var(--hs-navy);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Beautiful bouncy button styles */
+.hs-btn {
+  background: var(--hs-orange);
+  color: var(--hs-white);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(244, 123, 32, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.hs-btn-secondary {
+  background: var(--hs-white);
+  color: var(--hs-navy);
+  box-shadow: 0 8px 24px rgba(44, 49, 64, 0.08);
+}
+
+.hs-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(244, 123, 32, 0.35);
+}
+
+.hs-btn-secondary:hover {
+  box-shadow: 0 12px 28px rgba(44, 49, 64, 0.12);
+}
+
+.hs-btn:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+.hs-input {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  border-radius: 24px;
+  border: 2px solid transparent;
+  background: var(--hs-white);
+  box-shadow: 0 4px 16px rgba(44, 49, 64, 0.05);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--hs-navy);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.hs-input:focus {
+  outline: none;
+  border-color: var(--hs-orange);
+  box-shadow: 0 8px 24px rgba(244, 123, 32, 0.15);
+}
+
+/* Pill cards */
+.hs-card {
+  background: var(--hs-white);
+  border-radius: 32px;
+  padding: 2rem;
+  box-shadow: 0 16px 40px rgba(44, 49, 64, 0.06);
+}
+
+.hs-title {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.hs-subtitle {
+  color: var(--hs-grey);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
