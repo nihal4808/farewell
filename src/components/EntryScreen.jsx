@@ -13,8 +13,15 @@ export default function EntryScreen({ onLogin }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!code.trim()) { setError('Please enter your access code'); triggerShake(); return; }
-        onLogin(code);
+        const trimmedCode = code.trim();
+        if (!trimmedCode) { setError('Please enter your access code'); triggerShake(); return; }
+
+        if (trimmedCode === ADMIN_PASSWORD) {
+            navigate('/admin');
+            return;
+        }
+
+        onLogin(trimmedCode);
     };
 
     const triggerShake = () => { setShake(true); setTimeout(() => setShake(false), 500); };
