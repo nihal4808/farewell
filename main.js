@@ -528,9 +528,8 @@ async function loadMessages(seniorId) {
   // Add a few demo messages if none exist
   if (!messages.length) {
     messages = [
-      { id: 'demo1', from_senior_id: 's2', from_name: 'Bilal Qureshi', from_photo_url: 'https://i.pravatar.cc/200?img=3', to_senior_id: seniorId, message_text: 'You have always been an inspiration to everyone around you. Wishing you all the success the world has to offer. Go shine bright! ✦', timestamp: '2025-01-01' },
-      { id: 'demo2', from_senior_id: 's3', from_name: 'Celia Nour', from_photo_url: 'https://i.pravatar.cc/200?img=5', to_senior_id: seniorId, message_text: 'Remembering all the late nights we spent together in the computer lab. Those memories will stay with me forever. Keep creating amazing things!', timestamp: '2025-01-02' },
-      { id: 'demo3', from_senior_id: 's6', from_name: 'Fatima Al-Zahra', from_photo_url: 'https://i.pravatar.cc/200?img=16', to_senior_id: seniorId, message_text: 'Your kindness and humor made every difficult day easier to get through. The world is a better place with you in it. Stay golden! 🌙', timestamp: '2025-01-03' },
+      { id: 'demo1', from_senior_id: 's2', from_name: 'Bilal Qureshi', from_photo_url: 'https://i.pravatar.cc/600?img=3', to_senior_id: seniorId, message_text: 'You have always been an inspiration to everyone around you. Wishing you all the success the world has to offer. Go shine bright! ✦\n\n- Bilal', timestamp: '2025-01-01' },
+      { id: 'demo2', from_senior_id: 's3', from_name: 'Celia Nour', from_photo_url: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', to_senior_id: seniorId, message_text: 'Remembering all the late nights we spent together in the computer lab. Those memories will stay with me forever. Keep creating amazing things!', timestamp: '2025-01-02' }
     ];
   }
   renderBook();
@@ -540,80 +539,89 @@ async function loadMessages(seniorId) {
 function renderBook() {
   const total = messages.length;
   isMobile = window.innerWidth < 768;
-  const pps = isMobile ? 1 : 2;
-  bookPageIndex = Math.max(0, Math.min(bookPageIndex, Math.max(0, total - pps)));
-
-  renderPageContent('page-left-content', 'page-left-num', bookPageIndex, total);
-  if (!isMobile) renderPageContent('page-right-content', 'page-right-num', bookPageIndex + 1, total);
+  bookPageIndex = Math.max(0, Math.min(bookPageIndex, total - 1));
 
   if (total === 0) {
+    $('page-left-content').innerHTML = `<div class="page-empty-content" style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;height:100%"><p style="color:rgba(44,26,10,0.5);font-style:italic">Your story is being written...</p></div>`;
+    $('page-right-content').innerHTML = '';
+    $('page-left-num').textContent = '';
+    $('page-right-num').textContent = '';
     $('book-page-counter').textContent = 'No messages yet';
-  } else if (isMobile) {
-    $('book-page-counter').textContent = `Page ${toRoman(bookPageIndex + 1)} of ${toRoman(total)}`;
-  } else {
-    const s = bookPageIndex + 1, e = Math.min(bookPageIndex + 2, total);
-    $('book-page-counter').textContent = `${toRoman(s)}${e > s ? '–' + toRoman(e) : ''} of ${toRoman(total)}`;
-  }
-  $('book-prev').disabled = bookPageIndex === 0;
-  $('book-next').disabled = isMobile ? bookPageIndex >= total - 1 : bookPageIndex >= total - 2;
-}
-
-function renderPageContent(contentId, numId, index, total) {
-  const el = $(contentId), numEl = $(numId);
-  el.innerHTML = '';
-  if (index >= total || total === 0) {
-    if (index === 0) el.innerHTML = `<div class="page-empty-content" style="flex:1;display:flex;align-items:center;text-align:center"><p>Your story is being written by those who love you.</p></div>`;
-    numEl.textContent = '';
+    $('book-prev').disabled = true;
+    $('book-next').disabled = true;
     return;
   }
-  const msg = messages[index];
-  el.innerHTML = `
-    <div class="autograph-photo-wrap" style="margin-top:0">
-      <img src="${msg.from_photo_url || ''}" alt="${msg.from_name}" loading="lazy"/>
-    </div>
-    <div class="autograph-to-row" style="margin-top:1rem;margin-bottom:0.5rem">
-      <span>From:</span>
-      <h2 style="font-size:1.4rem">${msg.from_name}</h2>
-    </div>
-    <div class="autograph-textarea" style="flex:1;border:none;background:transparent;padding:0;font-size:0.95rem;overflow-y:auto">
-      ${msg.message_text.replace(/\n/g, '<br>')}
+
+  const msg = messages[bookPageIndex];
+
+  // Render Left Page (Text)
+  $('page-left-content').innerHTML = `
+    <div style="display:flex;flex-direction:column;min-height:100%;justify-content:center;align-items:center;padding:1rem;">
+      <h2 style="font-family:var(--font-display);font-size:2.4rem;color:var(--gold-dark);margin-bottom:2rem;text-align:center;line-height:1.2;letter-spacing:1px">${msg.from_name}</h2>
+      <div style="font-family:'Shadows Into Light',cursive,var(--font-body);font-size:1.4rem;line-height:1.8;color:#2c1a0a;text-align:center;width:100%">
+        ${msg.message_text.replace(/\n/g, '<br>')}
+      </div>
     </div>
   `;
-  numEl.textContent = index + 1;
+  $('page-left-num').textContent = (bookPageIndex * 2) + 1;
+
+  // Render Right Page (Photo)
+  const rightContent = $('page-right-content');
+  if (msg.from_photo_url) {
+    rightContent.innerHTML = `
+      <img src="${msg.from_photo_url}" alt="${msg.from_name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:0;" loading="lazy"/>
+    `;
+  } else {
+    rightContent.innerHTML = `
+      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(201,168,76,0.05);color:var(--gold-dark);font-family:var(--font-display);position:absolute;inset:0;border-radius:inherit;z-index:0;">
+        <p style="opacity:0.6">No friendship photo shared</p>
+      </div>
+    `;
+  }
+  $('page-right-num').textContent = (bookPageIndex * 2) + 2;
+  $('book-page-counter').textContent = `Message ${bookPageIndex + 1} of ${total}`;
+
+  $('book-prev').disabled = bookPageIndex === 0;
+  $('book-next').disabled = bookPageIndex >= total - 1;
 }
 
 function turnPage(dir) {
-  isMobile = window.innerWidth < 768;
-  const pps = isMobile ? 1 : 2;
   const total = messages.length;
   if (dir === 'next') {
-    if (bookPageIndex + pps >= total) return;
-    isMobile ? animateMobileFlip('next', () => { bookPageIndex += 1; renderBook(); })
-      : animateDesktopFlip('next', () => { bookPageIndex += 2; renderBook(); });
+    if (bookPageIndex + 1 >= total) return;
+    animateBookFlip('next', () => { bookPageIndex += 1; renderBook(); });
   } else {
     if (bookPageIndex === 0) return;
-    isMobile ? animateMobileFlip('prev', () => { bookPageIndex -= 1; renderBook(); })
-      : animateDesktopFlip('prev', () => { bookPageIndex -= 2; renderBook(); });
+    animateBookFlip('prev', () => { bookPageIndex -= 1; renderBook(); });
   }
 }
 
-function animateDesktopFlip(dir, cb) {
-  const page = dir === 'next' ? $('book-page-left') : $('book-page-right');
-  const cls = dir === 'next' ? 'flip-left' : 'flip-right';
-  page.classList.add(cls);
-  setTimeout(() => { page.classList.remove(cls); cb(); }, 700);
-}
-
-function animateMobileFlip(dir, cb) {
-  const page = $('book-page-left');
-  const out = dir === 'next' ? 'mobile-slide-out-left' : 'mobile-slide-out-right';
-  const inn = dir === 'next' ? 'mobile-slide-in-right' : 'mobile-slide-in-left';
-  page.classList.add(out);
-  setTimeout(() => {
-    page.classList.remove(out); cb();
-    page.classList.add(inn);
-    setTimeout(() => page.classList.remove(inn), 400);
-  }, 400);
+function animateBookFlip(dir, cb) {
+  isMobile = window.innerWidth < 768;
+  const target = $('book-spread');
+  if (isMobile) {
+    const out = dir === 'next' ? 'mobile-slide-out-left' : 'mobile-slide-out-right';
+    const inn = dir === 'next' ? 'mobile-slide-in-right' : 'mobile-slide-in-left';
+    target.classList.add(out);
+    setTimeout(() => {
+      target.classList.remove(out); cb();
+      target.scrollTop = 0; // reset scroll on mobile stack
+      target.classList.add(inn);
+      setTimeout(() => target.classList.remove(inn), 400);
+    }, 400);
+  } else {
+    target.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    target.style.opacity = '0';
+    target.style.transform = dir === 'next' ? 'scale(0.95) translateX(-20px)' : 'scale(0.95) translateX(20px)';
+    setTimeout(() => {
+      cb();
+      target.style.transform = dir === 'next' ? 'scale(0.95) translateX(20px)' : 'scale(0.95) translateX(-20px)';
+      setTimeout(() => {
+        target.style.opacity = '1';
+        target.style.transform = 'scale(1) translateX(0)';
+      }, 50);
+    }, 300);
+  }
 }
 
 function setupBookSwipe() {
@@ -632,7 +640,6 @@ function initBookNav() {
   $('book-next').addEventListener('click', () => turnPage('next'));
   window.addEventListener('resize', debounce(() => {
     isMobile = window.innerWidth < 768;
-    if (!isMobile) $('book-page-right').style.display = '';
     renderBook();
   }, 300));
 }

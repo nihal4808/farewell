@@ -167,9 +167,8 @@
 
         <div class="book-spread" id="book-spread">
           <!-- Left page -->
-          <article class="book-page page-left autograph-card" style="opacity:1; transform:none; border-radius:0"
-            id="book-page-left" aria-label="Book page">
-            <div class="autograph-tape" style="top:-16px"></div>
+          <article class="book-page page-left" style="opacity:1; transform:none;" id="book-page-left"
+            aria-label="Book page">
             <div class="page-content" id="page-left-content" style="display:flex;flex-direction:column;height:100%">
               <div class="page-empty-content" style="flex:1;display:flex;align-items:center;text-align:center">
                 <p>Your story is being written by those who love you.</p>
@@ -178,10 +177,9 @@
             <div class="page-number" id="page-left-num"></div>
           </article>
 
-          <!-- Right page (hidden on mobile) -->
-          <article class="book-page page-right autograph-card" style="opacity:1; transform:none; border-radius:0"
-            id="book-page-right" aria-label="Book page">
-            <div class="autograph-tape" style="top:-16px"></div>
+          <!-- Right page -->
+          <article class="book-page page-right" style="opacity:1; transform:none;" id="book-page-right"
+            aria-label="Book page">
             <div class="page-content" id="page-right-content" style="display:flex;flex-direction:column;height:100%">
             </div>
             <div class="page-number" id="page-right-num"></div>
@@ -427,7 +425,8 @@
         <img id="modal-photo-preview" src="" alt="Photo" />
         <div class="photo-src-toggle">
           <button class="src-btn active" id="src-profile" type="button">Profile Photo</button>
-          <label class="src-btn" for="src-upload">Upload Photo</label>
+          <label class="src-btn" for="src-upload" style="color:var(--gold); border-color:var(--gold);">Upload Friendship
+            Photo</label>
           <input type="file" id="src-upload" accept="image/*" hidden />
         </div>
       </div>
