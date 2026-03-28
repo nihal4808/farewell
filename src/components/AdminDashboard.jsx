@@ -1,95 +1,158 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockDB, MOCK_SENIORS_KEY } from '../data/mockDB';
-import { Users, Image as ImageIcon, Settings, LogOut, Plus } from 'lucide-react';
+import { mockDB, MOCK_SENIORS_KEY, MOCK_SENIORS_DEFAULT } from '../data/mockDB';
+import { Users, Image as ImageIcon, Settings, MessageSquare, LogOut, Plus, Trash2, Edit3, Save, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState('seniors');
+    const [tab, setTab] = useState('seniors');
     const [seniors, setSeniors] = useState([]);
+    const [editId, setEditId] = useState(null);
+    const [form, setForm] = useState({ name: '', code: '', photo_url: '' });
 
-    useEffect(() => {
-        mockDB.adminGetSeniors().then(setSeniors);
-    }, []);
+    useEffect(() => { loadSeniors(); }, []);
+
+    const loadSeniors = () => {
+        const stored = localStorage.getItem(MOCK_SENIORS_KEY);
+        setSeniors(stored ? JSON.parse(stored) : MOCK_SENIORS_DEFAULT);
+    };
+    const saveSeniors = (arr) => { localStorage.setItem(MOCK_SENIORS_KEY, JSON.stringify(arr)); setSeniors(arr); };
+
+    const startEdit = (s) => { setEditId(s.id); setForm({ name: s.name, code: s.code, photo_url: s.photo_url || '' }); };
+    const cancelEdit = () => { setEditId(null); setForm({ name: '', code: '', photo_url: '' }); };
+    const saveEdit = () => {
+        const updated = seniors.map(s => s.id === editId ? { ...s, ...form } : s);
+        saveSeniors(updated); cancelEdit();
+    };
+    const deleteSenior = (id) => { saveSeniors(seniors.filter(s => s.id !== id)); };
+    const addSenior = () => {
+        if (!form.name.trim()) return;
+        const code = form.code || form.name.substring(0, 3).toUpperCase() + String(seniors.length + 1).padStart(3, '0');
+        const newS = { id: 's' + Date.now(), name: form.name, code, photo_url: form.photo_url || 'https://i.pravatar.cc/200', department: 'AI & Data Science', batch_year: '2026' };
+        saveSeniors([...seniors, newS]); setForm({ name: '', code: '', photo_url: '' });
+    };
+
+    const tabs = [
+        { id: 'seniors', label: 'Seniors', icon: Users },
+        { id: 'memories', label: 'Memories', icon: ImageIcon },
+        { id: 'settings', label: 'Settings', icon: Settings },
+        { id: 'messages', label: 'Messages', icon: MessageSquare },
+    ];
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            style={{
-                width: '100%',
-                minHeight: '100vh',
-                background: 'var(--hs-bg)',
-                padding: '2rem 1rem'
-            }}
-        >
-            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <div>
-                        <h1 className="hs-title" style={{ color: 'var(--hs-navy)', fontSize: '2.2rem' }}>Admin Tools</h1>
-                        <p className="hs-subtitle" style={{ color: 'var(--hs-grey)' }}>Manage your Headspace-themed app</p>
+        <div className="admin-shell">
+            {/* Sidebar */}
+            <nav className="admin-sidebar">
+                <h2 className="font-display" style={{ fontSize: '1.5rem', color: 'var(--accent)', marginBottom: '1.5rem', fontWeight: 800 }}>
+                    Admin
+                </h2>
+                {tabs.map(t => (
+                    <div key={t.id} className={`admin-sidebar-item ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
+                        <t.icon size={18} /> {t.label}
                     </div>
-                    <Link to="/" className="hs-btn hs-btn-secondary" style={{ padding: '0.8rem 1.5rem', fontSize: '0.95rem' }}>
-                        <LogOut size={16} style={{ marginRight: '8px' }} /> Exit Admin
-                    </Link>
-                </header>
+                ))}
+                <div style={{ flex: 1 }} />
+                <Link to="/" className="admin-sidebar-item" style={{ color: 'var(--danger)', textDecoration: 'none' }}>
+                    <LogOut size={18} /> Exit
+                </Link>
+            </nav>
 
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-                    <button onClick={() => setActiveTab('seniors')} className={`hs-btn ${activeTab === 'seniors' ? '' : 'hs-btn-secondary'}`}>
-                        <Users size={18} style={{ marginRight: '8px' }} /> Seniors
-                    </button>
-                    <button onClick={() => setActiveTab('memories')} className={`hs-btn ${activeTab === 'memories' ? '' : 'hs-btn-secondary'}`}>
-                        <ImageIcon size={18} style={{ marginRight: '8px' }} /> Memories
-                    </button>
-                </div>
-
+            {/* Main Content */}
+            <main className="admin-main">
                 <AnimatePresence mode="wait">
-                    {activeTab === 'seniors' && (
-                        <motion.div
-                            key="seniors"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="hs-card"
-                        >
+                    {tab === 'seniors' && (
+                        <motion.div key="seniors" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                <h2 className="hs-title" style={{ fontSize: '1.5rem' }}>Managed Seniors</h2>
-                                <button className="hs-btn" style={{ padding: '0.6rem 1.2rem', fontSize: '0.95rem' }}>
-                                    <Plus size={16} style={{ marginRight: '6px' }} /> Add Senior
-                                </button>
+                                <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Managed Seniors</h2>
                             </div>
-                            <div style={{ display: 'grid', gap: '1rem' }}>
+
+                            {/* Add Form */}
+                            <div className="card" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                                <div style={{ flex: '1 1 200px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.25rem', display: 'block' }}>Name</label>
+                                    <input className="input" placeholder="Full name" value={editId ? '' : form.name} onChange={e => !editId && setForm(f => ({ ...f, name: e.target.value }))} />
+                                </div>
+                                <div style={{ flex: '0 1 120px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.25rem', display: 'block' }}>Code</label>
+                                    <input className="input" placeholder="Auto" value={editId ? '' : form.code} onChange={e => !editId && setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
+                                </div>
+                                {!editId && <button className="btn btn-primary btn-sm" onClick={addSenior}><Plus size={16} /> Add</button>}
+                            </div>
+
+                            {/* List */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 {seniors.map(s => (
-                                    <div key={s.id} style={{ display: 'flex', alignItems: 'center', padding: '1rem', background: 'var(--hs-bg)', borderRadius: '16px', gap: '1rem' }}>
-                                        <img src={s.photo_url} alt={s.name} style={{ width: '50px', height: '50px', borderRadius: '25px', objectFit: 'cover' }} />
-                                        <div style={{ flex: 1 }}>
-                                            <h4 style={{ fontWeight: 800, fontSize: '1.1rem' }}>{s.name}</h4>
-                                            <p style={{ color: 'var(--hs-grey)', fontSize: '0.9rem' }}>Code: {s.code}</p>
-                                        </div>
-                                        <button className="hs-btn hs-btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>Edit</button>
+                                    <div key={s.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem' }}>
+                                        <div className="avatar avatar-sm"><img src={s.photo_url} alt={s.name} /></div>
+                                        {editId === s.id ? (
+                                            <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                <input className="input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={{ flex: 1, padding: '0.5rem 0.75rem' }} />
+                                                <input className="input" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} style={{ width: 100, padding: '0.5rem 0.75rem' }} />
+                                                <button className="btn btn-primary btn-sm" onClick={saveEdit}><Save size={14} /></button>
+                                                <button className="btn btn-ghost btn-sm" onClick={cancelEdit}><X size={14} /></button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div style={{ flex: 1 }}>
+                                                    <h4 style={{ fontWeight: 700 }}>{s.name}</h4>
+                                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Code: {s.code}</p>
+                                                </div>
+                                                <button className="btn btn-ghost btn-sm" onClick={() => startEdit(s)}><Edit3 size={14} /></button>
+                                                <button className="btn btn-ghost btn-sm" style={{ color: 'var(--danger)' }} onClick={() => deleteSenior(s.id)}><Trash2 size={14} /></button>
+                                            </>
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         </motion.div>
                     )}
 
-                    {activeTab === 'memories' && (
-                        <motion.div
-                            key="memories"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="hs-card"
-                            style={{ textAlign: 'center', padding: '4rem 2rem' }}
-                        >
-                            <ImageIcon size={48} color="var(--hs-teal)" style={{ marginBottom: '1rem' }} />
-                            <h2 className="hs-title" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Memory Uploads</h2>
-                            <p className="hs-subtitle">Upload and manage all friendship photos submitted by your peers.</p>
+                    {tab === 'memories' && (
+                        <motion.div key="memories" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Memory Uploads</h2>
+                            <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+                                <ImageIcon size={48} color="var(--accent)" style={{ marginBottom: '1rem' }} />
+                                <p style={{ color: 'var(--text-secondary)' }}>Upload and manage shared memory photos.</p>
+                                <label className="btn btn-primary" style={{ marginTop: '1.5rem', cursor: 'pointer' }}>
+                                    <Plus size={16} /> Upload Photo
+                                    <input type="file" accept="image/*" hidden />
+                                </label>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {tab === 'settings' && (
+                        <motion.div key="settings" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Settings</h2>
+                            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                <div>
+                                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Department</label>
+                                    <input className="input" defaultValue="AI & Data Science" style={{ marginTop: '0.25rem' }} />
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Batch Year</label>
+                                    <input className="input" defaultValue="2026" style={{ marginTop: '0.25rem' }} />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <label style={{ fontWeight: 600 }}>Autograph Wall Open</label>
+                                    <input type="checkbox" defaultChecked style={{ width: 20, height: 20, accentColor: 'var(--accent)' }} />
+                                </div>
+                                <button className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }}><Save size={14} /> Save Settings</button>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {tab === 'messages' && (
+                        <motion.div key="messages" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Messages Viewer</h2>
+                            <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+                                <MessageSquare size={48} color="var(--accent)" style={{ marginBottom: '1rem' }} />
+                                <p style={{ color: 'var(--text-secondary)' }}>View all submitted autograph messages here. Messages will appear once students start sharing.</p>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
-        </motion.div>
+            </main>
+        </div>
     );
 }

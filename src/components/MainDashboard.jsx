@@ -1,69 +1,60 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PersonalLanding from './PersonalLanding';
+import MemoryGallery from './MemoryGallery';
 import AutographWall from './AutographWall';
 import AutographBook from './AutographBook';
+import { Download } from 'lucide-react';
 
 export default function MainDashboard({ user }) {
-    const [activeTab, setActiveTab] = useState('wall'); // 'wall' or 'book'
+    const contentRef = useRef(null);
+
+    const scrollToContent = () => {
+        contentRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            style={{
-                width: '100%',
-                minHeight: '100vh',
-                background: 'var(--hs-bg)',
-                padding: '2rem 1rem',
-                maxWidth: '800px',
-                margin: '0 auto',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '2rem'
-            }}
+            style={{ width: '100%' }}
         >
-            <header style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                <h1 className="hs-title" style={{ fontSize: '2.5rem', color: 'var(--hs-navy)' }}>
-                    Welcome back, {user?.name || 'Friend'}
-                </h1>
-                <p className="hs-subtitle" style={{ color: 'var(--hs-orange)' }}>
-                    Your digital memories
-                </p>
-            </header>
+            {/* Section 1: Personal Landing */}
+            <PersonalLanding senior={user} onScrollDown={scrollToContent} />
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                <button
-                    onClick={() => setActiveTab('wall')}
-                    className={activeTab === 'wall' ? 'hs-btn' : 'hs-btn hs-btn-secondary'}
-                    style={{ padding: '0.8rem 1.5rem', fontSize: '1rem' }}
-                >
-                    Sign Autographs
-                </button>
-                <button
-                    onClick={() => setActiveTab('book')}
-                    className={activeTab === 'book' ? 'hs-btn' : 'hs-btn hs-btn-secondary'}
-                    style={{ padding: '0.8rem 1.5rem', fontSize: '1rem' }}
-                >
-                    My Book
-                </button>
+            {/* Scrollable content */}
+            <div ref={contentRef}>
+                {/* Section 2: Memory Gallery */}
+                <MemoryGallery />
+
+                {/* Divider */}
+                <div style={{ width: '60px', height: '2px', background: 'var(--accent-dim)', margin: '2rem auto' }} />
+
+                {/* Section 3: Autograph Wall */}
+                <AutographWall currentUser={user} />
+
+                {/* Divider */}
+                <div style={{ width: '60px', height: '2px', background: 'var(--accent-dim)', margin: '2rem auto' }} />
+
+                {/* Section 4: Autograph Book */}
+                <AutographBook currentUser={user} />
+
+                {/* Section 5: PDF Download */}
+                <section style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
+                    <motion.button
+                        className="btn btn-primary"
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        style={{ padding: '1.2rem 2.5rem', fontSize: '1.1rem' }}
+                    >
+                        <Download size={20} /> Download Your Autograph Book
+                    </motion.button>
+                    <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                        Saves as a PDF — one message per page
+                    </p>
+                </section>
             </div>
-
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                    transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                    style={{ flex: 1, width: '100%' }}
-                >
-                    {activeTab === 'wall' && <AutographWall currentUser={user} />}
-                    {activeTab === 'book' && <AutographBook currentUser={user} />}
-                </motion.div>
-            </AnimatePresence>
-
         </motion.div>
     );
 }

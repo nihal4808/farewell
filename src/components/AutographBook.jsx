@@ -9,98 +9,94 @@ export default function AutographBook({ currentUser }) {
     const [direction, setDirection] = useState(0);
 
     useEffect(() => {
-        mockDB.getMessagesFor(currentUser.code).then(msgs => {
+        mockDB.getMessagesFor(currentUser?.code).then(msgs => {
             if (msgs.length === 0) {
                 setMessages([
-                    { id: 'm1', from_name: 'Bilal Qureshi', message_text: 'You have always been an inspiration. Wishing you all the success! ✨', from_photo_url: 'https://i.pravatar.cc/600?img=3' },
-                    { id: 'm2', from_name: 'Celia Nour', message_text: 'Remembering all the late nights in the lab. Keep creating amazing things!', from_photo_url: 'https://i.pravatar.cc/600?img=5' }
+                    { id: 'm1', from_name: 'Bilal Qureshi', message_text: 'You have always been an inspiration to everyone around you. Wishing you all the success the world has to offer. Go shine bright! ✦\n\n— Bilal', from_photo_url: 'https://i.pravatar.cc/600?img=3' },
+                    { id: 'm2', from_name: 'Celia Nour', message_text: 'Remembering all the late nights we spent together in the computer lab. Those memories will stay with me forever. Keep creating amazing things!', from_photo_url: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=600&q=80' },
                 ]);
-            } else {
-                setMessages(msgs);
-            }
+            } else { setMessages(msgs); }
         });
     }, [currentUser]);
 
-    const paginate = (newDirection) => {
-        if (pageIndex + newDirection < 0 || pageIndex + newDirection >= messages.length) return;
-        setDirection(newDirection);
-        setPageIndex(prev => prev + newDirection);
+    const paginate = (dir) => {
+        if (pageIndex + dir < 0 || pageIndex + dir >= messages.length) return;
+        setDirection(dir);
+        setPageIndex(prev => prev + dir);
     };
 
     const variants = {
-        enter: (dir) => ({ x: dir > 0 ? 300 : -300, opacity: 0, scale: 0.95 }),
-        center: { zIndex: 1, x: 0, opacity: 1, scale: 1 },
-        exit: (dir) => ({ zIndex: 0, x: dir < 0 ? 300 : -300, opacity: 0, scale: 0.95 })
+        enter: (d) => ({ x: d > 0 ? 300 : -300, opacity: 0 }),
+        center: { zIndex: 1, x: 0, opacity: 1 },
+        exit: (d) => ({ zIndex: 0, x: d < 0 ? 300 : -300, opacity: 0 })
     };
 
-    if (messages.length === 0) return <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--hs-grey)' }}>Loading your memories...</div>;
+    if (!messages.length) return (
+        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+            <p className="font-display" style={{ fontSize: '1.2rem' }}>No messages yet...</p>
+        </div>
+    );
 
     const msg = messages[pageIndex];
 
     return (
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <section style={{ padding: '4rem 1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+            <div className="section-header">
+                <h2 className="section-title font-display">Your Book of Memories</h2>
+                <p className="section-subtitle">Messages written for you by your friends</p>
+            </div>
 
-            <div style={{ position: 'relative', width: '100%', maxWidth: '800px', height: '600px', overflow: 'hidden', padding: '1rem 0' }}>
+            <div style={{ position: 'relative', width: '100%', minHeight: '500px', overflow: 'hidden' }}>
                 <AnimatePresence initial={false} custom={direction} mode="popLayout">
                     <motion.div
-                        key={pageIndex}
-                        custom={direction}
-                        variants={variants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                        drag="x"
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={1}
-                        onDragEnd={(e, { offset, velocity }) => {
+                        key={pageIndex} custom={direction} variants={variants}
+                        initial="enter" animate="center" exit="exit"
+                        transition={{ x: { type: 'spring', stiffness: 280, damping: 30 }, opacity: { duration: 0.2 } }}
+                        drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.8}
+                        onDragEnd={(_, { offset, velocity }) => {
                             const swipe = Math.abs(offset.x) * velocity.x;
-                            if (swipe < -10000) paginate(1);
-                            else if (swipe > 10000) paginate(-1);
+                            if (swipe < -8000) paginate(1);
+                            else if (swipe > 8000) paginate(-1);
                         }}
-                        style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: window.innerWidth < 768 ? 'column' : 'row',
-                            gap: '1.5rem',
-                            alignItems: 'stretch'
-                        }}
+                        className="book-spread"
+                        style={{ position: 'absolute', width: '100%' }}
                     >
-                        {/* Left Page (Text) */}
-                        <div className="hs-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '3rem 2rem' }}>
-                            <h2 className="hs-title" style={{ fontSize: '2.5rem', color: 'var(--hs-orange)', marginBottom: '1.5rem' }}>{msg.from_name}</h2>
-                            <p style={{ fontSize: '1.3rem', color: 'var(--hs-navy)', lineHeight: 1.8 }}>{msg.message_text}</p>
+                        {/* Left: Text */}
+                        <div className="book-page book-page-left">
+                            <h2 className="font-display" style={{ fontSize: '2.2rem', fontWeight: 800, color: '#8B6914', marginBottom: '1.5rem' }}>
+                                {msg.from_name}
+                            </h2>
+                            <p style={{ fontSize: '1.15rem', color: '#3a2a10', lineHeight: 1.85, whiteSpace: 'pre-line' }}>
+                                {msg.message_text}
+                            </p>
                         </div>
-
-                        {/* Right Page (Photo) */}
-                        <div className="hs-card" style={{ flex: 1, padding: 0, overflow: 'hidden', display: 'flex', minHeight: window.innerWidth < 768 ? '300px' : 'auto' }}>
-                            <img src={msg.from_photo_url} alt="Friendship" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        {/* Right: Photo */}
+                        <div className="book-page book-page-right">
+                            {msg.from_photo_url ? (
+                                <img src={msg.from_photo_url} alt={msg.from_name} loading="lazy" />
+                            ) : (
+                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}>
+                                    No photo shared
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </AnimatePresence>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginTop: '1rem' }}>
-                <button
-                    onClick={() => paginate(-1)}
-                    disabled={pageIndex === 0}
-                    className="hs-btn hs-btn-secondary"
-                    style={{ padding: '1rem', borderRadius: '50%', opacity: pageIndex === 0 ? 0.3 : 1 }}
-                >
-                    <ChevronLeft size={24} />
-                </button>
-                <span className="hs-subtitle">Message {pageIndex + 1} of {messages.length}</span>
-                <button
-                    onClick={() => paginate(1)}
-                    disabled={pageIndex === messages.length - 1}
-                    className="hs-btn hs-btn-secondary"
-                    style={{ padding: '1rem', borderRadius: '50%', opacity: pageIndex === messages.length - 1 ? 0.3 : 1 }}
-                >
-                    <ChevronRight size={24} />
-                </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', marginTop: '1.5rem' }}>
+                <motion.button className="btn btn-secondary btn-icon" whileTap={{ scale: 0.9 }}
+                    onClick={() => paginate(-1)} disabled={pageIndex === 0} style={{ opacity: pageIndex === 0 ? 0.3 : 1 }}>
+                    <ChevronLeft size={22} />
+                </motion.button>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                    Message {pageIndex + 1} of {messages.length}
+                </span>
+                <motion.button className="btn btn-secondary btn-icon" whileTap={{ scale: 0.9 }}
+                    onClick={() => paginate(1)} disabled={pageIndex >= messages.length - 1} style={{ opacity: pageIndex >= messages.length - 1 ? 0.3 : 1 }}>
+                    <ChevronRight size={22} />
+                </motion.button>
             </div>
-        </div>
+        </section>
     );
 }
