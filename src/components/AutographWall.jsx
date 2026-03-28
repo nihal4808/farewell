@@ -22,17 +22,41 @@ export default function AutographWall({ currentUser }) {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => setUploadedPhoto(ev.target.result);
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                const jpegUrl = canvas.toDataURL('image/jpeg', 0.85);
+                setUploadedPhoto(jpegUrl);
+            };
+            img.src = ev.target.result;
+        };
         reader.readAsDataURL(file);
     };
 
-    const submitMessage = () => {
-        if (!msgText.trim()) return;
+    const submitMessage = async () => {
+        if (!msgText.trim() || !modalTarget) return;
         setSending(true);
-        setTimeout(() => {
-            setSending(false);
+        try {
+            await mockDB.addMessage({
+                from_senior_id: currentUser?.id,
+                from_name: currentUser?.name,
+                from_photo_url: uploadedPhoto || currentUser?.photo_url || '',
+                to_senior_id: modalTarget.id,
+                to_name: modalTarget.name,
+                message_text: msgText
+            });
             setModalTarget(null);
-        }, 800);
+        } catch (error) {
+            console.error('Failed to send message:', error);
+            alert('Failed to send message. Please try again.');
+        } finally {
+            setSending(false);
+        }
     };
 
     const containerVars = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };

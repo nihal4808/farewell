@@ -12,34 +12,56 @@ export default function AdminDashboard() {
 
     useEffect(() => { loadSeniors(); }, []);
 
-    const loadSeniors = () => {
-        const stored = localStorage.getItem(MOCK_SENIORS_KEY);
-        setSeniors(stored ? JSON.parse(stored) : MOCK_SENIORS_DEFAULT);
+    const loadSeniors = async () => {
+        const data = await mockDB.adminGetSeniors();
+        setSeniors(data);
     };
-    const saveSeniors = (arr) => { localStorage.setItem(MOCK_SENIORS_KEY, JSON.stringify(arr)); setSeniors(arr); };
+    const saveSeniors = async (arr) => {
+        // Note: New architecture handles per-item updates, 
+        // but for bulk local state sync we still setSeniors
+        setSeniors(arr);
+    };
 
     const startEdit = (s) => { setEditId(s.id); setForm({ name: s.name, code: s.code, photo_url: s.photo_url || '' }); };
     const cancelEdit = () => { setEditId(null); setForm({ name: '', code: '', photo_url: '' }); };
-    const saveEdit = () => {
-        const updated = seniors.map(s => s.id === editId ? { ...s, ...form } : s);
-        saveSeniors(updated); cancelEdit();
+    const saveEdit = async () => {
+        const updatedItems = seniors.map(s => s.id === editId ? { ...s, ...form } : s);
+        await mockDB.updateSenior(editId, form);
+        setSeniors(updatedItems);
+        cancelEdit();
     };
-    const deleteSenior = (id) => { saveSeniors(seniors.filter(s => s.id !== id)); };
+    const deleteSenior = async (id) => {
+        await mockDB.deleteSenior(id);
+        setSeniors(seniors.filter(s => s.id !== id));
+    };
     const handlePhotoUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-            setForm(f => ({ ...f, photo_url: ev.target.result }));
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                // Force JPEG (peg) format as requested
+                const jpegUrl = canvas.toDataURL('image/jpeg', 0.85);
+                setForm(f => ({ ...f, photo_url: jpegUrl }));
+            };
+            img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
     };
 
-    const addSenior = () => {
+    const addSenior = async () => {
         if (!form.name.trim()) return;
         const code = form.code || form.name.substring(0, 3).toUpperCase() + String(seniors.length + 1).padStart(3, '0');
-        const newS = { id: 's' + Date.now(), name: form.name, code, photo_url: form.photo_url || 'https://i.pravatar.cc/200', department: 'AI & Data Science', batch_year: '2026' };
-        saveSeniors([...seniors, newS]); setForm({ name: '', code: '', photo_url: '' });
+        const newS = { name: form.name, code, photo_url: form.photo_url || 'https://i.pravatar.cc/200', department: 'AI & Data Science', batch_year: '2026' };
+        await mockDB.addSenior(newS);
+        loadSeniors(); // Refresh from DB to get auto-ID
+        setForm({ name: '', code: '', photo_url: '' });
     };
 
     const tabs = [
