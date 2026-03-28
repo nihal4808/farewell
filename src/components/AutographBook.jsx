@@ -9,7 +9,7 @@ export default function AutographBook({ currentUser }) {
     const [direction, setDirection] = useState(0);
 
     useEffect(() => {
-        mockDB.getMessagesFor(currentUser?.code).then(msgs => {
+        mockDB.getMessagesFor(currentUser?.id).then(msgs => {
             if (msgs.length === 0) {
                 setMessages([
                     { id: 'm1', from_name: 'Bilal Qureshi', message_text: 'You have always been an inspiration to everyone around you. Wishing you all the success the world has to offer. Go shine bright! ✦\n\n— Bilal', from_photo_url: 'https://i.pravatar.cc/600?img=3' },

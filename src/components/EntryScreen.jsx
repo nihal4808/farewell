@@ -1,8 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
+const ADMIN_PASSWORD = 'nihal77';
+
 export default function EntryScreen({ onLogin }) {
+    const navigate = useNavigate();
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
     const [shake, setShake] = useState(false);
@@ -48,7 +52,15 @@ export default function EntryScreen({ onLogin }) {
                     <motion.div animate={shake ? { x: [-12, 12, -12, 12, 0] } : {}} transition={{ duration: 0.4 }}>
                         <input
                             type="text" value={code}
-                            onChange={(e) => { setCode(e.target.value.toUpperCase()); setError(''); }}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setCode(val);
+                                setError('');
+                                // Auto-enter admin on password match
+                                if (val === ADMIN_PASSWORD) {
+                                    navigate('/admin');
+                                }
+                            }}
                             placeholder="ACCESS CODE"
                             className="input"
                             maxLength={8}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mockDB, MOCK_SENIORS_KEY, MOCK_SENIORS_DEFAULT } from '../data/mockDB';
-import { Users, Image as ImageIcon, Settings, MessageSquare, LogOut, Plus, Trash2, Edit3, Save, X } from 'lucide-react';
+import { Users, Image as ImageIcon, Settings, MessageSquare, LogOut, Plus, Trash2, Edit3, Save, X, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
@@ -25,6 +25,16 @@ export default function AdminDashboard() {
         saveSeniors(updated); cancelEdit();
     };
     const deleteSenior = (id) => { saveSeniors(seniors.filter(s => s.id !== id)); };
+    const handlePhotoUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            setForm(f => ({ ...f, photo_url: ev.target.result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
     const addSenior = () => {
         if (!form.name.trim()) return;
         const code = form.code || form.name.substring(0, 3).toUpperCase() + String(seniors.length + 1).padStart(3, '0');
@@ -67,7 +77,7 @@ export default function AdminDashboard() {
                             </div>
 
                             {/* Add Form */}
-                            <div className="card" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                            <div className="card" style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                                 <div style={{ flex: '1 1 200px' }}>
                                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.25rem', display: 'block' }}>Name</label>
                                     <input className="input" placeholder="Full name" value={editId ? '' : form.name} onChange={e => !editId && setForm(f => ({ ...f, name: e.target.value }))} />
@@ -75,6 +85,12 @@ export default function AdminDashboard() {
                                 <div style={{ flex: '0 1 120px' }}>
                                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.25rem', display: 'block' }}>Code</label>
                                     <input className="input" placeholder="Auto" value={editId ? '' : form.code} onChange={e => !editId && setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} />
+                                </div>
+                                <div style={{ flex: '0 1 150px' }}>
+                                    <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', width: '100%', padding: '0.8rem' }}>
+                                        <Upload size={14} /> {form.photo_url ? 'Photo Added' : 'Add Photo'}
+                                        <input type="file" accept="image/*" hidden onChange={handlePhotoUpload} />
+                                    </label>
                                 </div>
                                 {!editId && <button className="btn btn-primary btn-sm" onClick={addSenior}><Plus size={16} /> Add</button>}
                             </div>
@@ -88,6 +104,10 @@ export default function AdminDashboard() {
                                             <div style={{ flex: 1, display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 <input className="input" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={{ flex: 1, padding: '0.5rem 0.75rem' }} />
                                                 <input className="input" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} style={{ width: 100, padding: '0.5rem 0.75rem' }} />
+                                                <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', padding: '0.5rem' }}>
+                                                    <Upload size={14} />
+                                                    <input type="file" accept="image/*" hidden onChange={handlePhotoUpload} />
+                                                </label>
                                                 <button className="btn btn-primary btn-sm" onClick={saveEdit}><Save size={14} /></button>
                                                 <button className="btn btn-ghost btn-sm" onClick={cancelEdit}><X size={14} /></button>
                                             </div>
