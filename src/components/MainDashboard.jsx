@@ -296,6 +296,14 @@ export default function MainDashboard({ user }) {
                 {/* Divider */}
                 <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)', margin: '2rem auto' }} />
 
+                <section id="chat" ref={chatRef}>
+                    {/* Section: Archive Vault */}
+                    <MediaVault />
+                </section>
+
+                {/* Divider */}
+                <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)', margin: '2rem auto' }} />
+
                 <section id="work" ref={workRef}>
                     {/* Section 3: Autograph Wall */}
                     <AutographWall currentUser={user} />
@@ -312,19 +320,12 @@ export default function MainDashboard({ user }) {
                         isGeneratingPDF={isGenerating} 
                     />
                 </section>
-
-                {/* Section 5: PDF Download */}
                                 
                 {/* Divider */}
                 <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-alt), transparent)', margin: '2rem auto' }} />
 
                 <section id="wall" ref={wallRef}>
                     <GlobalWall currentUser={user} isActive={activeSection === "wall"} />
-                </section>
-
-                <section id="chat" ref={chatRef}>
-                    <MediaVault />
-
                 </section>
             </div>
 

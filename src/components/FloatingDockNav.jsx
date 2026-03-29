@@ -3,9 +3,9 @@ import { UserRound, Image as ImageIcon, PenSquare, FolderOpen } from 'lucide-rea
 
 const NAV_ITEMS = [
     { id: 'timeline', label: 'The Journey', icon: ImageIcon },
+    { id: 'chat', label: 'Media Vault', icon: FolderOpen },
     { id: 'work', label: 'Yearbook', icon: PenSquare },
-    { id: 'wall', label: 'The Wall', icon: UserRound },
-    { id: 'chat', label: 'Media Vault', icon: FolderOpen }
+    { id: 'wall', label: 'The Wall', icon: UserRound }
 ];
 
 export default function FloatingDockNav({ activeSection, onNavigate }) {

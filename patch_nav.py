@@ -1,22 +1,21 @@
-import sys
+with open('src/components/FloatingDockNav.jsx', 'r') as f:
+    content = f.read()
 
-def patch_file(filename):
-    with open(filename, 'r') as f:
-        content = f.read()
-
-    new_nav = """const NAV_ITEMS = [
-    { id: 'timeline', label: 'The Journey' },
-    { id: 'work', label: 'Yearbook' },
-    { id: 'wall', label: 'The Wall' },
-    { id: 'chat', label: 'Media Vault' }
+old_nav = """const NAV_ITEMS = [
+    { id: 'timeline', label: 'The Journey', icon: ImageIcon },
+    { id: 'work', label: 'Yearbook', icon: PenSquare },
+    { id: 'wall', label: 'The Wall', icon: UserRound },
+    { id: 'chat', label: 'Media Vault', icon: FolderOpen }
 ];"""
-    
-    # We replace from "const NAV_ITEMS = [" down to "];"
-    import re
-    content = re.sub(r'const NAV_ITEMS = \[.*?\];', new_nav, content, flags=re.DOTALL)
-    
-    with open(filename, 'w') as f:
-        f.write(content)
 
-patch_file('src/components/TopJourneyNav.jsx')
-patch_file('src/components/FloatingDockNav.jsx')
+new_nav = """const NAV_ITEMS = [
+    { id: 'timeline', label: 'The Journey', icon: ImageIcon },
+    { id: 'chat', label: 'Media Vault', icon: FolderOpen },
+    { id: 'work', label: 'Yearbook', icon: PenSquare },
+    { id: 'wall', label: 'The Wall', icon: UserRound }
+];"""
+
+content = content.replace(old_nav, new_nav)
+
+with open('src/components/FloatingDockNav.jsx', 'w') as f:
+    f.write(content)
