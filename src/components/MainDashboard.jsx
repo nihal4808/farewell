@@ -312,6 +312,13 @@ export default function MainDashboard({ user }) {
                 {/* Divider */}
                 <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-alt), transparent)', margin: '2rem auto' }} />
 
+                <section id="wall" ref={wallRef}>
+                    <GlobalWall currentUser={user} isActive={activeSection === "wall"} />
+                </section>
+
+                {/* Divider */}
+                <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-alt), transparent)', margin: '2rem auto' }} />
+
                 <section id="code" ref={codeRef}>
                     {/* Section 4: Autograph Book */}
                     <AutographBook 
@@ -319,13 +326,6 @@ export default function MainDashboard({ user }) {
                         onDownloadPDF={generatePDF} 
                         isGeneratingPDF={isGenerating} 
                     />
-                </section>
-                                
-                {/* Divider */}
-                <div style={{ width: '84px', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-alt), transparent)', margin: '2rem auto' }} />
-
-                <section id="wall" ref={wallRef}>
-                    <GlobalWall currentUser={user} isActive={activeSection === "wall"} />
                 </section>
             </div>
 

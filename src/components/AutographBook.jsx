@@ -40,7 +40,7 @@ export default function AutographBook({ currentUser, onDownloadPDF, isGenerating
     const msg = messages[pageIndex];
 
     return (
-        <section style={{ padding: '4rem 1.5rem', maxWidth: '900px', margin: '0 auto' }}>
+        <section style={{ padding: '4rem 1.5rem', maxWidth: '900px', margin: '0 auto', paddingBottom: '8rem' }}>
             <div className="section-header">
                 <h2 className="section-title font-display">Your Book of Memories</h2>
                 <p className="section-subtitle">Letters your classmates left for your next chapter</p>
