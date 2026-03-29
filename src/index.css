@@ -1426,3 +1426,26 @@ n.journey-row-final .journey-polaroid-image-wrap img {
   font-size: 1.1rem;
   line-height: 1.3;
 }
+
+/* Note Style Autograph */
+.book-page-left-note {
+  background: #fdfcf8;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.03);
+}
+
+.note-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
