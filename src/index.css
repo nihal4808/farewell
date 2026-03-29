@@ -1198,6 +1198,7 @@ n.journey-row-final .journey-polaroid-image-wrap img {
 }
 
 .wall-card:hover .wall-card-bg img {
+  filter: grayscale(0%);
   transform: scale(1.05);
 }
 
@@ -1210,7 +1211,7 @@ n.journey-row-final .journey-polaroid-image-wrap img {
 }
 
 .wall-card:hover .wall-card-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 100%);
 }
 
 .wall-card-hover-btn {
