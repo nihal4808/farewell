@@ -203,7 +203,7 @@ export const mockDB = {
     // Settings
     
     async getWallMessages() {
-        if (USE_FIREBASE) {
+        if (true) {
             try {
                 const q = query(collection(db, WALL_COL), orderBy('timestamp', 'desc'));
                 const snap = await withReadTimeout(getDocs(q));
@@ -223,7 +223,7 @@ export const mockDB = {
             ...data,
             timestamp: Date.now()
         };
-        if (USE_FIREBASE) {
+        if (true) {
             try {
                 const docRef = await withWriteTimeout(addDoc(collection(db, WALL_COL), msg));
                 msg.id = docRef.id;
