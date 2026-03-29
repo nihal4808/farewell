@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import {
+    getAuth,
+    initializeAuth,
+    indexedDBLocalPersistence,
+    browserLocalPersistence,
+    inMemoryPersistence
+} from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,3 +20,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+let authInstance;
+try {
+    // Fallback to in-memory persistence for mobile/private mode where storage can fail.
+    authInstance = initializeAuth(app, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence, inMemoryPersistence]
+    });
+} catch (error) {
+    authInstance = getAuth(app);
+}
+
+export const auth = authInstance;
+export const storage = getStorage(app);

@@ -43,7 +43,7 @@ export default function AutographBook({ currentUser }) {
         <section style={{ padding: '4rem 1.5rem', maxWidth: '900px', margin: '0 auto' }}>
             <div className="section-header">
                 <h2 className="section-title font-display">Your Book of Memories</h2>
-                <p className="section-subtitle">Messages written for you by your friends</p>
+                <p className="section-subtitle">Letters your classmates left for your next chapter</p>
             </div>
 
             <div style={{ position: 'relative', width: '100%', minHeight: '500px', overflow: 'hidden' }}>
@@ -63,10 +63,10 @@ export default function AutographBook({ currentUser }) {
                     >
                         {/* Left: Text */}
                         <div className="book-page book-page-left">
-                            <h2 className="font-display" style={{ fontSize: '2.2rem', fontWeight: 800, color: '#8B6914', marginBottom: '1.5rem' }}>
+                            <h2 className="font-display" style={{ fontSize: '2.2rem', fontWeight: 800, color: '#7be0ff', marginBottom: '1.5rem' }}>
                                 {msg.from_name}
                             </h2>
-                            <p style={{ fontSize: '1.15rem', color: '#3a2a10', lineHeight: 1.85, whiteSpace: 'pre-line' }}>
+                            <p style={{ fontSize: '1.1rem', color: '#e7efff', lineHeight: 1.85, whiteSpace: 'pre-line' }}>
                                 {msg.message_text}
                             </p>
                         </div>

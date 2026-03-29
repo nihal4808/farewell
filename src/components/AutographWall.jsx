@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mockDB } from '../data/mockDB';
-import { PenTool, X, Send, Upload } from 'lucide-react';
+import { PenTool, X, Send, Upload, Search } from 'lucide-react';
 
 export default function AutographWall({ currentUser }) {
     const [seniors, setSeniors] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [modalTarget, setModalTarget] = useState(null);
     const [msgText, setMsgText] = useState('');
     const [uploadedPhoto, setUploadedPhoto] = useState(null);
@@ -59,29 +60,59 @@ export default function AutographWall({ currentUser }) {
         }
     };
 
+    const filteredSeniors = seniors.filter(s => {
+        if (s.id === currentUser?.id) return false;
+        return s.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
     const containerVars = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
     const itemVars = { hidden: { opacity: 0, y: 30, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', damping: 18 } } };
 
     return (
-        <section style={{ padding: '4rem 1.5rem', maxWidth: '900px', margin: '0 auto' }}>
-            <div className="section-header">
-                <h2 className="section-title font-display">The Autograph Wall</h2>
-                <p className="section-subtitle">Click on a classmate to leave your mark</p>
+        <section style={{ padding: '4rem 5%', maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="wall-controls">
+                <div className="wall-search">
+                    <Search size={16} color="#888" />
+                    <input 
+                        type="text" 
+                        placeholder="Find a classmate..." 
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                    />
+                </div>
             </div>
 
-            <motion.div className="grid-wall" variants={containerVars} initial="hidden" whileInView="show" viewport={{ once: true }}>
-                {seniors.filter(s => s.id !== currentUser?.id).map(senior => (
-                    <motion.div key={senior.id} variants={itemVars} whileHover={{ y: -6, scale: 1.03 }} whileTap={{ scale: 0.95 }}
-                        className="card" onClick={() => openModal(senior)}
-                        style={{ padding: '1.5rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', textAlign: 'center' }}
-                    >
-                        <div className="avatar avatar-md" style={{ marginBottom: '0.75rem' }}>
-                            <img src={senior.photo_url || 'https://i.pravatar.cc/200'} alt={senior.name} />
-                        </div>
-                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, lineHeight: 1.2, marginBottom: '0.5rem' }}>{senior.name}</h3>
-                        <PenTool size={16} color="var(--accent)" />
-                    </motion.div>
-                ))}
+            <motion.div className="wall-grid" variants={containerVars} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                {filteredSeniors.map(senior => {
+                    // Extract up to 2 initials safely
+                    const parts = senior.name ? senior.name.split(' ') : ['A', 'A'];
+                    const initials = parts.map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+                    return (
+                        <motion.div key={senior.id} variants={itemVars} className="wall-card" onClick={() => openModal(senior)}>
+                            <div className="wall-card-bg">
+                                {senior.photo_url && senior.photo_url !== 'https://i.pravatar.cc/200' ? (
+                                    <img src={senior.photo_url} alt={senior.name} loading="lazy" />
+                                ) : (
+                                    <div className="wall-card-initials">{initials}</div>
+                                )}
+                            </div>
+                            <div className="wall-card-overlay"></div>
+                            
+                            <div className="wall-card-hover-btn">
+                                WRITE MESSAGE
+                            </div>
+
+                            <div className="wall-card-info">
+                                <h3 className="wall-card-name">{senior.name}</h3>
+                                <div className="wall-card-meta">
+                                    <span className="wall-card-dept">{senior.department?.toUpperCase() || 'CSE'}</span>
+                                    <span className="wall-card-code">{senior.code || senior.id}</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    );
+                })}
             </motion.div>
 
             {/* Message Modal */}

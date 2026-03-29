@@ -36,9 +36,18 @@ export default function PersonalLanding({ senior, onScrollDown }) {
                 initial={{ y: 10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', fontWeight: 500 }}
+                style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '0.3rem' }}
             >
                 Class of {senior.batch_year || '2026'} · {senior.department || 'AI & Data Science'}
+            </motion.p>
+
+            <motion.p
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                style={{ fontSize: '0.9rem', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            >
+                Four years. One story.
             </motion.p>
 
             <motion.div

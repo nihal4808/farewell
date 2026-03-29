@@ -1,6 +1,5 @@
-// firebase-config.js — MOCK MODE (Firebase unlinked)
-// Replace this file with real Firebase config when ready to go live.
-export const db = null;
-export const storage = null;
-export const auth = null;
-export default null;
+// firebase-config.js — LIVE MODE (Firebase enabled)
+import { db, auth, storage } from './src/lib/firebase.js';
+
+export { db, auth, storage };
+export default { db, auth, storage };
