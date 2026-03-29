@@ -1449,3 +1449,7 @@ n.journey-row-final .journey-polaroid-image-wrap img {
   backdrop-filter: blur(2px);
   z-index: 10;
 }
+
+.font-script {
+  font-family: 'Caveat', cursive;
+}
