@@ -17,6 +17,7 @@ export default function AdminDashboard({ onAdminLogout }) {
     const [form, setForm] = useState({ name: '', code: '', photo_url: '' });
     const [memories, setMemories] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [wallMessages, setWallMessages] = useState([]);
         const [vaultPhotos, setVaultPhotos] = useState([]);
     const [vaultCategories, setVaultCategories] = useState([]);
     const [newCategory, setNewCategory] = useState('');
@@ -44,6 +45,7 @@ export default function AdminDashboard({ onAdminLogout }) {
         loadSeniors();
         loadMemories();
         loadMessages();
+        loadWallMessages();
         loadVaultPhotos();
         loadSettings();
     }, []);
@@ -57,6 +59,12 @@ export default function AdminDashboard({ onAdminLogout }) {
         const data = await mockDB.getAllMemories();
         setMemories(data);
     };
+    
+    const loadWallMessages = async () => {
+        const msgs = await mockDB.getWallMessages();
+        setWallMessages(msgs || []);
+    };
+
     const loadMessages = async () => {
         const data = await mockDB.adminGetAllMessages();
         setMessages(data);
@@ -234,10 +242,20 @@ export default function AdminDashboard({ onAdminLogout }) {
             alert(error.message || 'Failed to delete memory.');
         }
     };
+    
+    const handleDeleteWallMessage = async (id) => {
+        if(window.confirm('Delete this pinned wall message for everyone?')) {
+            await mockDB.deleteWallMessage(id);
+            await loadWallMessages();
+            alert('Wall message deleted!');
+        }
+    };
+
     const deleteMessage = async (id) => {
         try {
             await mockDB.deleteMessage(id);
             loadMessages();
+        loadWallMessages();
         } catch (error) {
             alert(error.message || 'Failed to delete message.');
         }
@@ -267,6 +285,7 @@ export default function AdminDashboard({ onAdminLogout }) {
         { id: 'vault', label: 'Archive Vault', icon: ImageIcon },
         { id: 'settings', label: 'Settings', icon: Settings },
         { id: 'messages', label: 'Messages', icon: MessageSquare },
+        { id: 'wall', label: 'Wall Pins', icon: MessageSquare },
     ];
 
     return (
@@ -515,6 +534,53 @@ export default function AdminDashboard({ onAdminLogout }) {
                             </div>
                         </motion.div>
                     )}
+                
+                    {tab === 'wall' && (
+                        <motion.div key="wall" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.5rem' }}>Wall Messages (Global)</h2>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                                gap: '1.5rem',
+                                padding: '1rem 0'
+                            }}>
+                                {wallMessages.length === 0 && <div style={{ color: 'var(--text-muted)', gridColumn: '1/-1' }}>No wall pins yet.</div>}
+                                {wallMessages.map(msg => (
+                                    <div key={msg.id} className="card" style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem', borderLeft: '3px solid var(--accent)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid rgba(0,0,0,0.05)', paddingBottom: '0.5rem' }}>
+                                            <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>{msg.authorName || 'Anonymous'}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleString()}</div>
+                                        </div>
+                                        <div style={{ 
+                                            marginBottom: '1rem', 
+                                            flex: 1, 
+                                            fontStyle: 'italic', 
+                                            lineHeight: 1.5,
+                                            padding: '1rem',
+                                            backgroundColor: 'rgba(0,0,0,0.02)',
+                                            borderRadius: '8px',
+                                            fontSize: '0.95rem'
+                                        }}>
+                                            "{msg.text}"
+                                        </div>
+                                        {msg.photoUrl && (
+                                            <img src={msg.photoUrl} alt="Attached" style={{ width: '100%', borderRadius: '8px', marginBottom: '1rem', maxHeight: '200px', objectFit: 'cover' }} />
+                                        )}
+                                        <div style={{ alignSelf: 'flex-end', marginTop: 'auto' }}>
+                                            <button 
+                                                className="btn btn-sm btn-ghost" 
+                                                style={{ color: 'var(--danger)', padding: '0.4rem 0.8rem' }}
+                                                onClick={() => handleDeleteWallMessage(msg.id)}
+                                            >
+                                                <Trash2 size={16} style={{marginRight: '0.25rem'}} /> Remove Pin
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
                 </AnimatePresence>
             </main>
 
